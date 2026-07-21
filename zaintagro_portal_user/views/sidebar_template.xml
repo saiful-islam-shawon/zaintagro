@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="custom_left_sidebar" name="Custom Left Sidebar">
+
+        <aside class="custom_dashboard_sidebar">
+
+            <nav class="custom_sidebar_nav">
+
+                <a href="/"
+                   t-attf-class="custom_sidebar_item #{'active' if active_menu == 'dashboard' else ''}">
+                    <i class="fa fa-th-large"/>
+                    <span>Create Opportunity</span>
+                </a>
+
+            </nav>
+
+        </aside>
+
+    </template>
+
+</odoo>
