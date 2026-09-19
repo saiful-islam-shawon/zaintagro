@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =========================================================
+         1. Portal User Security Category
+    ========================================================== -->
+    <record id="portal_user_security_category"
+            model="ir.module.category">
+        <field name="name">Portal User Security</field>
+        <field name="sequence">20</field>
+    </record>
+
+
+    <!-- =========================================================
+         2. CRM Website Privilege
+    ========================================================== -->
+    <record id="crm_website_privilege"
+            model="res.groups.privilege">
+        <field name="name">CRM for Website</field>
+
+        <field name="category_id"
+               ref="portal_user_security_category"/>
+
+        <field name="sequence">10</field>
+    </record>
+
+
+    <!-- =========================================================
+         3. CRM Website Access Group
+    ========================================================== -->
+    <record id="group_crm_website_access"
+            model="res.groups">
+        <field name="name">Yes</field>
+
+        <field name="privilege_id"
+               ref="crm_website_privilege"/>
+    </record>
+
+
+    <!-- =========================================================
+         4. Sales Website Privilege
+    ========================================================== -->
+    <record id="sales_website_privilege"
+            model="res.groups.privilege">
+        <field name="name">Sales for Website</field>
+
+        <field name="category_id"
+               ref="portal_user_security_category"/>
+
+        <field name="sequence">20</field>
+    </record>
+
+
+    <!-- =========================================================
+         5. Sales Website Access Group
+    ========================================================== -->
+    <record id="group_sales_website_access"
+            model="res.groups">
+        <field name="name">Yes</field>
+
+        <field name="privilege_id"
+               ref="sales_website_privilege"/>
+    </record>
+
+</odoo>

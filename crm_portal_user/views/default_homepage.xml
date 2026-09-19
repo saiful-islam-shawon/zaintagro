@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="default_homepage_inherit"
+              inherit_id="website.homepage"
+              name="Custom Default Homepage">
+
+        <xpath expr="//div[@id='wrap']" position="replace">
+
+            <div id="wrap"
+                 class="oe_structure custom_homepage">
+
+                <div class="container-fluid px-0">
+
+                    <div class="row g-0 min-vh-100">
+
+                        <!-- ==================================================
+                             Left Sidebar
+                        =================================================== -->
+                        <aside class="col-lg-2 col-md-3 custom_sidebar_column">
+
+                            <!-- Reusable sidebar template -->
+                            <t t-call="crm_portal_user.custom_left_sidebar"/>
+
+                        </aside>
+
+
+                        <!-- ==================================================
+                             Main Content
+                        =================================================== -->
+                        <main class="col-lg-10 col-md-9 custom_dashboard_content">
+
+                            <div class="custom_content_wrapper p-4 p-lg-5">
+
+                                <!-- Welcome Header -->
+                                <div class="dashboard_header mb-4">
+
+                                    <t t-set="current_user"
+                                       t-value="request.env.user"/>
+
+                                    <div class="d-flex flex-wrap
+                                                align-items-center
+                                                justify-content-between
+                                                gap-3">
+
+                                        <div>
+
+                                            <h2 class="mb-1 fw-bold">
+                                                Welcome,
+                                                <span t-esc="current_user.name"/>
+                                            </h2>
+
+                                            <p class="text-muted mb-0">
+                                                Manage CRM opportunities and
+                                                sales orders from your portal.
+                                            </p>
+
+                                        </div>
+
+                                        <div class="dashboard_user_info">
+
+                                            <span class="badge rounded-pill
+                                                         bg-light
+                                                         text-dark
+                                                         border
+                                                         px-3
+                                                         py-2">
+
+                                                <i class="fa fa-user me-1"/>
+
+                                                <span t-esc="current_user.login"/>
+
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- ==================================================
+                                     Quick Action Cards
+                                =================================================== -->
+                                <div class="row g-4 mb-5">
+
+                                    <!-- CRM Opportunity -->
+                                    <div class="col-xl-4 col-md-6">
+
+                                        <div class="card dashboard_action_card
+                                                    h-100
+                                                    border-0
+                                                    shadow-sm">
+
+                                            <div class="card-body p-4">
+
+                                                <div class="dashboard_card_icon
+                                                            mb-3">
+
+                                                    <i class="fa fa-handshake-o
+                                                              fa-2x"/>
+
+                                                </div>
+
+                                                <h4 class="card-title fw-bold">
+                                                    CRM Opportunity
+                                                </h4>
+
+                                                <p class="card-text text-muted">
+                                                    Submit customer information
+                                                    and create a new CRM
+                                                    opportunity.
+                                                </p>
+
+                                                <a href="/"
+                                                   class="btn btn-primary">
+                                                    <i class="fa fa-plus me-1"/>
+                                                    Create Opportunity
+                                                </a>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Sale Order -->
+                                    <div class="col-xl-4 col-md-6">
+
+                                        <div class="card dashboard_action_card
+                                                    h-100
+                                                    border-0
+                                                    shadow-sm">
+
+                                            <div class="card-body p-4">
+
+                                                <div class="dashboard_card_icon
+                                                            mb-3">
+
+                                                    <i class="fa fa-shopping-cart
+                                                              fa-2x"/>
+
+                                                </div>
+
+                                                <h4 class="card-title fw-bold">
+                                                    Sale Orders
+                                                </h4>
+
+                                                <p class="card-text text-muted">
+                                                    Create new quotations and
+                                                    review your existing sales
+                                                    orders.
+                                                </p>
+
+                                                <a href="/sale_order"
+                                                   class="btn
+                                                          btn-outline-primary">
+                                                    <i class="fa fa-list me-1"/>
+                                                    View Sale Orders
+                                                </a>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- My Account -->
+                                    <div class="col-xl-4 col-md-6">
+
+                                        <div class="card dashboard_action_card
+                                                    h-100
+                                                    border-0
+                                                    shadow-sm">
+
+                                            <div class="card-body p-4">
+
+                                                <div class="dashboard_card_icon
+                                                            mb-3">
+
+                                                    <i class="fa fa-user-circle-o
+                                                              fa-2x"/>
+
+                                                </div>
+
+                                                <h4 class="card-title fw-bold">
+                                                    My Account
+                                                </h4>
+
+                                                <p class="card-text text-muted">
+                                                    Review your account details
+                                                    and manage your portal
+                                                    information.
+                                                </p>
+
+                                                <a href="/my/account"
+                                                   class="btn
+                                                          btn-outline-secondary">
+                                                    <i class="fa fa-cog me-1"/>
+                                                    Manage Account
+                                                </a>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- ==================================================
+                                     Information Section
+                                =================================================== -->
+                                <div class="card border-0 shadow-sm">
+
+                                    <div class="card-body p-4">
+
+                                        <div class="row align-items-center">
+
+                                            <div class="col-lg-8">
+
+                                                <h4 class="fw-bold mb-2">
+                                                    Portal Dashboard
+                                                </h4>
+
+                                                <p class="text-muted mb-lg-0">
+                                                    Use the navigation menu to
+                                                    access CRM opportunities,
+                                                    sale orders and other
+                                                    available portal services.
+                                                </p>
+
+                                            </div>
+
+                                            <div class="col-lg-4
+                                                        text-lg-end
+                                                        mt-3
+                                                        mt-lg-0">
+
+                                                <a href="/contactus"
+                                                   class="btn btn-dark">
+
+                                                    <i class="fa fa-envelope
+                                                              me-1"/>
+
+                                                    Contact Support
+
+                                                </a>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </main>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </xpath>
+
+    </template>
+
+</odoo>

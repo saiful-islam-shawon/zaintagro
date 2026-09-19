@@ -1,0 +1,704 @@
+#sale_order_form {
+
+    .so_customer_search_wrapper {
+        position: relative;
+    }
+    .so_customer_suggestions_dropdown {
+        position: absolute;
+        z-index: 50;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_customer_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+    .so_tax_selector {
+        position: relative;
+        padding-right: 30px;
+    }
+
+    .so_tax_dropdown_icon {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+
+        color: #8b8f94;
+        font-size: 11px;
+
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+    .so_tax_selector[aria-expanded="true"] .so_tax_dropdown_icon {
+        transform: translateY(-50%) rotate(180deg);
+    }
+
+    .so_global_discount_btn {
+        min-width: 95px;
+        padding: 7px 15px;
+        font-weight: 700;
+    }
+
+    .so_total_separator {
+        width: 190px;
+        margin: 8px 0 8px auto;
+        border-top: 1px solid #d8dadd;
+    }
+
+    // pricelist
+    .so_pricelist_search_wrapper {
+        position: relative;
+    }
+    .so_pricelist_suggestions_dropdown {
+        position: absolute;
+        z-index: 50;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_pricelist_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+    // payterms
+
+    .so_payment_term_search_wrapper {
+        position: relative;
+    }
+    .so_payment_term_suggestions_dropdown {
+        position: absolute;
+        z-index: 50;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_payment_term_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+    // product
+    .so_product_search_wrapper {
+        position: relative;
+    }
+    .so_product_suggestions_dropdown {
+        position: absolute;
+        z-index: 60;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_product_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+    // taxs
+
+    .so_tax_dropdown_menu {
+        min-width: 260px;
+        max-height: 280px;
+        padding: 8px;
+        overflow-y: auto;
+    }
+    .so_tax_search_wrapper {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        padding-bottom: 8px;
+        background: #ffffff;
+    }
+    .so_tax_options {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+
+    // other info
+
+    .so_other_info_wrapper {
+        padding-top: 16px;
+    }
+    .so_other_info_title {
+        padding-bottom: 8px;
+        margin-bottom: 16px;
+        color: #1f2937;
+        font-size: 25px;
+        font-weight: 800;
+        text-transform: uppercase;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+
+    // tags in other info
+
+    .so_tags_dropdown {
+        width: 100%;
+    }
+    .so_tag_selector {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        min-height: 44px;
+        padding: 8px 12px;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    .so_tag_selector[aria-expanded="true"] {
+        border-color: #017e84;
+        box-shadow: 0 0 0 1px rgba(1, 126, 132, 0.15);
+    }
+    .so_selected_tags {
+        display: flex;
+        flex: 1;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .so_tag_placeholder {
+        color: #8b8f94;
+        font-size: 15px;
+    }
+    .so_tags_dropdown_menu {
+        width: 100%;
+        max-height: 360px;
+        padding: 8px;
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_tag_search_wrapper {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        background: #ffffff;
+        > i {
+            position: absolute;
+            left: 12px;
+            color: #8b8f94;
+        }
+    }
+    .so_tag_search {
+        height: 38px;
+        padding-left: 36px;
+        border: 1px solid #d8dadd;
+        border-radius: 5px;
+    }
+    .so_tag_options {
+        max-height: 285px;
+        overflow-y: auto;
+    }
+    .so_tag_option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+        padding: 10px 10px;
+        color: #1f2937;
+        font-size: 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        &:hover {
+            background: #eef3f4;
+        }
+    }
+    .so_tag_option_input {
+        position: static;
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .so_tag_checkmark {
+        display: none;
+    }
+    .so_selected_tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 8px;
+        color: #263238;
+        font-size: 13px;
+        background: #b8e7e5;
+        border-radius: 12px;
+    }
+    .so_tag_remove {
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        &:hover {
+            color: #dc3545;
+        }
+    }
+
+
+    .so_tag_selector.dropdown-toggle::after {
+        display: none !important;
+    }
+
+    .so_other_info_delivery,
+    .so_other_info_tracking {
+        margin-top: 100px;
+    }
+
+    .so_user_search_wrapper {
+        position: relative;
+    }
+    .so_user_suggestions_dropdown {
+        position: absolute;
+        z-index: 50;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_user_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+
+    .so_team_search_wrapper {
+        position: relative;
+    }
+    .so_team_suggestions_dropdown {
+        position: absolute;
+        z-index: 50;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_team_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+
+    .so_fiscal_position_search_wrapper {
+        position: relative;
+    }
+    .so_fiscal_position_suggestions_dropdown {
+        position: absolute;
+        z-index: 50;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_fiscal_position_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+
+    .so_warehouse_search_wrapper {
+        position: relative;
+    }
+    .so_warehouse_suggestions_dropdown {
+        position: absolute;
+        z-index: 50;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_warehouse_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+
+    .so_incoterm_search_wrapper {
+        position: relative;
+    }
+    .so_incoterm_suggestions_dropdown {
+        position: absolute;
+        z-index: 50;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_incoterm_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+
+    .so_opportunity_search_wrapper {
+        position: relative;
+    }
+    .so_opportunity_suggestions_dropdown {
+        position: absolute;
+        z-index: 50;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_opportunity_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+
+    .so_campaign_search_wrapper {
+        position: relative;
+    }
+    .so_campaign_suggestions_dropdown {
+        position: absolute;
+        z-index: 50;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_campaign_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+
+
+    .so_medium_search_wrapper {
+        position: relative;
+    }
+    .so_medium_suggestions_dropdown {
+        position: absolute;
+        z-index: 50;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_medium_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+
+    .so_source_search_wrapper {
+        position: relative;
+    }
+    .so_source_suggestions_dropdown {
+        position: absolute;
+        z-index: 50;
+        width: 100%;
+        max-height: 240px;
+        margin-top: 4px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #d8dadd;
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .so_source_suggestion_item {
+        padding: 9px 12px;
+        cursor: pointer;
+        &:hover {
+            background: #f1f6f7;
+        }
+    }
+
+
+}
+
+
+@media (min-width: 992px) {
+    #sale_order_form {
+        .so_other_info_wrapper {
+            display: flex;
+            column-gap: 120px;
+            row-gap: 32px;
+        }
+
+        .so_other_info_wrapper > .col-lg-6 {
+            flex: 0 0 calc(50% - 60px);
+            max-width: calc(50% - 60px);
+        }
+    }
+}
+
+
+
+
+// mobile view
+
+@media (max-width: 767.98px) {
+    #sale_order_form {
+
+        // mobile view invoicing mergin add
+        .so_other_info_invoicing{
+            margin-top: 100px;
+        }
+
+        .table-responsive {
+            overflow: visible;
+        }
+
+        .so_order_lines_table {
+            border: 0;
+
+            thead {
+                display: none;
+            }
+
+            tbody {
+                display: block;
+            }
+
+            .so_order_line_row {
+                display: block;
+
+                padding: 14px;
+                margin-bottom: 14px;
+
+                background: #ffffff;
+                border: 1px solid #e5e7eb;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+            }
+
+            .so_order_line_row td {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+
+                width: 100%;
+                padding: 8px 0;
+
+                border: 0;
+            }
+
+            .so_order_line_row td::before {
+                flex: 0 0 38%;
+                color: #374151;
+                font-size: 13px;
+                font-weight: 700;
+            }
+
+            .so_order_line_row td:nth-child(1)::before {
+                content: "Product";
+            }
+
+            .so_order_line_row td:nth-child(2)::before {
+                content: "Quantity";
+            }
+
+            .so_order_line_row td:nth-child(3)::before {
+                content: "Unit Price";
+            }
+
+            .so_order_line_row td:nth-child(4)::before {
+                content: "Taxes";
+            }
+
+            .so_order_line_row td:nth-child(5)::before {
+                content: "Disc.%";
+            }
+
+            .so_order_line_row td:nth-child(6)::before {
+                content: "Disc. Amount";
+            }
+
+            .so_order_line_row td:nth-child(7)::before {
+                content: "Amount";
+            }
+
+            .so_order_line_row td:nth-child(8) {
+                justify-content: flex-end;
+                padding-top: 12px;
+            }
+
+            .so_order_line_row td:nth-child(8)::before {
+                content: "";
+                display: none;
+            }
+
+            .so_order_line_row td > input,
+            .so_order_line_row td > select,
+            .so_order_line_row td > .dropdown,
+            .so_order_line_row td > .so_product_search_wrapper {
+                flex: 1;
+                min-width: 0;
+            }
+        }
+
+        .so_product_suggestions_dropdown,
+        .so_tax_dropdown_menu {
+            z-index: 3000;
+        }
+
+        #so_add_line {
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .so_order_summary {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .so_total_actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+    }
+}
+
+
+
+
+@media (max-width: 767.98px) {
+    #sale_order_form {
+        .so_order_line_row td:nth-child(1) {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 7px;
+        }
+
+        .so_order_line_row td:nth-child(1)::before {
+            flex: none;
+            width: 100%;
+        }
+
+        .so_order_line_row td:nth-child(1) .so_product_search_wrapper {
+            width: 100%;
+            flex: none;
+        }
+
+        .so_product_search {
+            height: 42px;
+            font-size: 14px;
+            border-radius: 8px;
+        }
+
+        .so_product_suggestions_dropdown {
+            left: 0;
+            right: 0;
+            width: 100%;
+            max-height: 230px;
+            margin-top: 6px;
+
+            overflow-y: auto;
+            background: #ffffff;
+            border: 1px solid #d8dadd;
+            border-radius: 10px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
+
+            z-index: 4000;
+        }
+
+        .so_product_suggestion_item {
+            padding: 11px 13px;
+            font-size: 14px;
+            line-height: 1.35;
+
+            &:hover {
+                background: #eefafa;
+            }
+        }
+    }
+}

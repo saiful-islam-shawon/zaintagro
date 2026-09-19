@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="homepage" name="Custom Homepage">
+        <t t-call="website.layout">
+
+            <div id="wrap" class="oe_structure custom_dashboard_page">
+
+                <div class="container-fluid">
+                    <div class="row g-0">
+
+                        <!-- Left Sidebar -->
+                        <div class="col-lg-2 col-md-3 custom_sidebar_column">
+
+                            <t t-set="active_menu" t-value="'dashboard'" />
+
+                            <t t-call="crm_portal_user.custom_left_sidebar" />
+
+                        </div>
+
+                        <!-- Main Content -->
+                        <div class="col-lg-10 col-md-9 custom_dashboard_content">
+
+                            <div class="custom_content_wrapper">
+
+                                <!-- Success Message -->
+                                <div t-if="request.params.get('success')"
+                                    class="custom_success_banner">
+
+                                    <div class="custom_success_icon">
+                                        <i class="fa fa-check" />
+                                    </div>
+
+                                    <div class="custom_success_text">
+                                        <h5>Opportunity Submitted</h5>
+                                        <p>The CRM opportunity has been created successfully.</p>
+                                    </div>
+
+                                </div>
+
+                                <div class="mb-4">
+                                    <h2 class="mb-1">Create Opportunity</h2>
+                                    <p class="text-muted mb-0">
+                                        Submit customer information to create a CRM opportunity.
+                                    </p>
+                                </div>
+
+                                <section>
+
+                                    <div class="container-fluid px-0">
+
+                                        <!-- form -->
+                                        <form id="crm_opportunity_form"
+                                            action="/crm/opportunity/submit"
+                                            method="post"
+                                            enctype="multipart/form-data"
+                                            class="o_mark_required"
+                                            data-mark="*">
+
+                                            <!-- Required for authenticated portal users -->
+                                            <input type="hidden"
+                                                name="csrf_token"
+                                                t-att-value="request.csrf_token()" />
+
+                                            <div class="s_website_form_rows row s_col_no_bgcolor">
+
+                                                <!-- Opportunity Title -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12
+                                    s_website_form_model_required"
+                                                    data-type="char"
+                                                    data-name="Opportunity Title">
+
+                                                    <label class="form-label"
+                                                        for="crm_opportunity_name"> Opportunity
+                                                        Title <span class="text-danger">*</span>
+                                                    </label>
+
+                                                    <input type="text"
+                                                        id="crm_opportunity_name"
+                                                        name="name"
+                                                        class="form-control s_website_form_input"
+                                                        placeholder="For example: Website Development"
+                                                        required="required" />
+                                                </div>
+
+                                                <!-- Contact Name -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="char"
+                                                    data-name="Contact Name">
+
+                                                    <label class="form-label"
+                                                        for="crm_contact_name"> Contact Name <span
+                                                            class="text-danger">*</span>
+                                                    </label>
+
+                                                    <input type="text"
+                                                        id="crm_contact_name"
+                                                        name="contact_name"
+                                                        class="form-control s_website_form_input"
+                                                        data-fill-with="name"
+                                                        placeholder="Customer contact name"
+                                                        required="required" />
+                                                </div>
+
+                                                <!-- Company Name -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="char"
+                                                    data-name="Company Name">
+
+                                                    <label class="form-label"
+                                                        for="crm_company_name">
+                                                        Company Name
+                                                    </label>
+
+                                                    <input type="text"
+                                                        id="crm_company_name"
+                                                        name="partner_name"
+                                                        class="form-control s_website_form_input"
+                                                        data-fill-with="commercial_company_name"
+                                                        placeholder="Customer company name" />
+                                                </div>
+
+                                                <!-- Job Position -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="char"
+                                                    data-name="Job Position">
+
+                                                    <label class="form-label"
+                                                        for="crm_function">
+                                                        Job Position
+                                                    </label>
+
+                                                    <input type="text"
+                                                        id="crm_function"
+                                                        name="function"
+                                                        class="form-control s_website_form_input"
+                                                        placeholder="For example: Managing Director" />
+                                                </div>
+
+                                                <!-- Email -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12
+                                    s_website_form_required"
+                                                    data-type="email"
+                                                    data-name="Email">
+
+                                                    <label class="form-label"
+                                                        for="crm_email"> Email <span
+                                                            class="text-danger">*</span>
+                                                    </label>
+
+                                                    <input type="email"
+                                                        id="crm_email"
+                                                        name="email_from"
+                                                        class="form-control s_website_form_input"
+                                                        data-fill-with="email"
+                                                        placeholder="customer@example.com"
+                                                        required="required" />
+                                                </div>
+
+                                                <!-- Phone -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="tel"
+                                                    data-name="Phone">
+
+                                                    <label class="form-label"
+                                                        for="crm_phone">
+                                                        Phone
+                                                    </label>
+
+                                                    <input type="tel"
+                                                        id="crm_phone"
+                                                        name="phone"
+                                                        class="form-control s_website_form_input"
+                                                        data-fill-with="phone"
+                                                        placeholder="+880 1XXXXXXXXX" />
+                                                </div>
+
+                                                <!-- Website -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="url"
+                                                    data-name="Website">
+
+                                                    <label class="form-label"
+                                                        for="crm_website">
+                                                        Website
+                                                    </label>
+
+                                                    <input type="url"
+                                                        id="crm_website"
+                                                        name="website"
+                                                        class="form-control s_website_form_input"
+                                                        placeholder="https://example.com" />
+                                                </div>
+
+                                                <!-- Referred By -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="char"
+                                                    data-name="Referred By">
+
+                                                    <label class="form-label"
+                                                        for="crm_referred">
+                                                        Referred By
+                                                    </label>
+
+                                                    <input type="text"
+                                                        id="crm_referred"
+                                                        name="referred"
+                                                        class="form-control s_website_form_input"
+                                                        placeholder="Referral source" />
+                                                </div>
+
+                                                <!-- Expected Revenue -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="float"
+                                                    data-name="Expected Revenue">
+
+                                                    <label class="form-label"
+                                                        for="crm_expected_revenue">
+                                                        Expected Revenue
+                                                    </label>
+
+                                                    <input type="number"
+                                                        id="crm_expected_revenue"
+                                                        name="expected_revenue"
+                                                        class="form-control s_website_form_input"
+                                                        min="0"
+                                                        step="0.01"
+                                                        placeholder="0.00" />
+                                                </div>
+
+                                                <!-- Expected Closing Date -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="date"
+                                                    data-name="Expected Closing">
+
+                                                    <label class="form-label"
+                                                        for="crm_date_deadline">
+                                                        Expected Closing Date
+                                                    </label>
+
+                                                    <input type="date"
+                                                        id="crm_date_deadline"
+                                                        name="date_deadline"
+                                                        class="form-control s_website_form_input" />
+                                                </div>
+
+
+                                                <!-- CRM Tags -->
+                                                <div class="s_website_form_field mb-3 col-12"
+                                                    data-type="many2many"
+                                                    data-name="Tags">
+
+                                                    <label class="form-label" for="crm_tag_ids">
+                                                        Tags
+                                                    </label>
+
+                                                    <input type="hidden"
+                                                        id="crm_tag_ids"
+                                                        name="tag_ids"
+                                                        class="s_website_form_input"
+                                                        value="" />
+
+                                                    <div class="dropdown crm_tags_dropdown">
+
+                                                        <div
+                                                            class="crm_tag_selector dropdown-toggle"
+                                                            id="crm_tag_selector"
+                                                            role="button"
+                                                            data-bs-toggle="dropdown"
+                                                            data-bs-auto-close="outside"
+                                                            aria-expanded="false">
+
+                                                            <div class="crm_selected_tags">
+                                                                <span class="crm_tag_placeholder">
+                                                                    Select tags...
+                                                                </span>
+                                                            </div>
+
+                                                            <i
+                                                                class="fa fa-angle-down crm_tag_dropdown_icon" />
+                                                        </div>
+
+                                                        <div
+                                                            class="dropdown-menu crm_tags_dropdown_menu"
+                                                            aria-labelledby="crm_tag_selector">
+
+                                                            <div class="crm_tag_search_wrapper">
+                                                                <i class="fa fa-search" />
+
+                                                                <input type="text"
+                                                                    class="form-control crm_tag_search"
+                                                                    placeholder="Search tags..." />
+                                                            </div>
+
+                                                            <div class="crm_tag_options">
+
+                                                                <t t-if="crm_tags">
+
+                                                                    <t t-foreach="crm_tags"
+                                                                        t-as="tag">
+
+                                                                        <label
+                                                                            class="crm_tag_option"
+                                                                            t-att-data-tag-name="tag.name.lower()">
+
+                                                                            <input type="checkbox"
+                                                                                class="crm_tag_option_input"
+                                                                                t-att-value="tag.id"
+                                                                                t-att-data-tag-name="tag.name" />
+
+                                                                            <span
+                                                                                class="crm_tag_checkmark">
+                                                                                <i
+                                                                                    class="fa fa-check" />
+                                                                            </span>
+
+                                                                            <span
+                                                                                class="crm_tag_option_name">
+                                                                                <t t-esc="tag.name" />
+                                                                            </span>
+
+                                                                        </label>
+
+                                                                    </t>
+
+                                                                </t>
+
+                                                                <t t-else="">
+                                                                    <div
+                                                                        class="text-muted px-3 py-2">
+                                                                        No tags are available.
+                                                                    </div>
+                                                                </t>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                                <!-- Address Section -->
+                                                <div class="col-12 mt-3 mb-2">
+                                                    <h5 class="mb-1">Address Information</h5>
+                                                    <hr class="mt-2" />
+                                                </div>
+
+                                                <!-- Street -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="char"
+                                                    data-name="Street">
+
+                                                    <label class="form-label"
+                                                        for="crm_street">
+                                                        Street
+                                                    </label>
+
+                                                    <input type="text"
+                                                        id="crm_street"
+                                                        name="street"
+                                                        class="form-control s_website_form_input"
+                                                        t-att-value="partner.street or ''"
+                                                        placeholder="Street address" />
+                                                </div>
+
+                                                <!-- Street 2 -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="char"
+                                                    data-name="Street 2">
+
+                                                    <label class="form-label"
+                                                        for="crm_street2">
+                                                        Street 2
+                                                    </label>
+
+                                                    <input type="text"
+                                                        id="crm_street2"
+                                                        name="street2"
+                                                        class="form-control s_website_form_input"
+                                                        t-att-value="partner.street2 or ''"
+                                                        placeholder="Apartment, suite, floor, etc." />
+                                                </div>
+
+                                                <!-- City -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-4 col-12"
+                                                    data-type="char"
+                                                    data-name="City">
+
+                                                    <label class="form-label"
+                                                        for="crm_city">
+                                                        City
+                                                    </label>
+
+                                                    <input type="text"
+                                                        id="crm_city"
+                                                        name="city"
+                                                        class="form-control s_website_form_input"
+                                                        t-att-value="partner.city or ''"
+                                                        placeholder="City" />
+                                                </div>
+
+                                                <!-- ZIP -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-4 col-12"
+                                                    data-type="char"
+                                                    data-name="ZIP">
+
+                                                    <label class="form-label"
+                                                        for="crm_zip">
+                                                        ZIP / Postal Code
+                                                    </label>
+
+                                                    <input type="text"
+                                                        id="crm_zip"
+                                                        name="zip"
+                                                        class="form-control s_website_form_input"
+                                                        t-att-value="partner.zip or ''"
+                                                        placeholder="Postal code" />
+                                                </div>
+
+                                                <!-- Country -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-4 col-12"
+                                                    data-type="many2one"
+                                                    data-name="Country">
+
+                                                    <label class="form-label" for="crm_country_search">
+                                                        Country
+                                                    </label>
+
+                                                    <input type="hidden"
+                                                        id="crm_country_id"
+                                                        name="country_id"
+                                                        class="s_website_form_input"
+                                                        t-att-value="partner.country_id.id if partner.country_id else ''" />
+
+                                                    <div class="position-relative crm_country_search_wrapper">
+                                                        <input type="text"
+                                                            id="crm_country_search"
+                                                            class="form-control s_website_form_input"
+                                                            placeholder="Select Country"
+                                                            autocomplete="off"
+                                                            t-att-value="partner.country_id.name if partner.country_id else ''" />
+
+                                                        <div id="crm_country_suggestions"
+                                                            class="crm_country_suggestions_dropdown d-none">
+                                                            <t t-foreach="crm_countries" t-as="country">
+                                                                <div class="crm_country_suggestion_item"
+                                                                    t-att-data-id="country.id"
+                                                                    t-att-data-name="country.name">
+                                                                    <t t-esc="country.name" />
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- State -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="many2one"
+                                                    data-name="State">
+
+                                                    <label class="form-label" for="crm_state_search">
+                                                        State
+                                                    </label>
+
+                                                    <input type="hidden"
+                                                            id="crm_state_id"
+                                                            name="state_id"
+                                                            class="s_website_form_input"
+                                                            t-att-value="partner.state_id.id if partner.state_id else ''" />
+
+                                                        <div class="position-relative crm_state_search_wrapper">
+                                                            <input type="text"
+                                                                id="crm_state_search"
+                                                                class="form-control s_website_form_input"
+                                                                placeholder="Select State"
+                                                                autocomplete="off"
+                                                                t-att-value="partner.state_id.name if partner.state_id else ''" />
+
+                                                            <div id="crm_state_suggestions"
+                                                                class="crm_state_suggestions_dropdown d-none">
+                                                                <t t-foreach="crm_states" t-as="state">
+                                                                    <div class="crm_state_suggestion_item"
+                                                                        t-att-data-id="state.id"
+                                                                        t-att-data-name="state.name"
+                                                                        t-att-data-country-id="state.country_id.id">
+                                                                        <t t-esc="state.name" />
+                                                                    </div>
+                                                                </t>
+                                                            </div>
+                                                        </div>
+                                                </div>
+
+
+                                                <!-- Marketing Information -->
+                                                <div class="col-12 mt-4 mb-2">
+                                                    <h5 class="mb-1">Marketing Information</h5>
+                                                    <hr class="mt-2" />
+                                                </div>
+
+                                                <!-- Campaign -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="many2one"
+                                                    data-name="Campaign">
+
+                                                    <label class="form-label" for="crm_campaign_search">
+                                                        Campaign
+                                                    </label>
+
+                                                    <input type="hidden"
+                                                        id="crm_campaign_id"
+                                                        name="campaign_id"
+                                                        class="s_website_form_input" />
+
+                                                    <div class="position-relative crm_campaign_search_wrapper">
+                                                        <input type="text"
+                                                            id="crm_campaign_search"
+                                                            class="form-control s_website_form_input"
+                                                            placeholder="Select Campaign"
+                                                            autocomplete="off" />
+
+                                                        <div id="crm_campaign_suggestions"
+                                                            class="crm_campaign_suggestions_dropdown d-none">
+                                                            <t t-foreach="crm_campaigns" t-as="campaign">
+                                                                <div class="crm_campaign_suggestion_item"
+                                                                    t-att-data-id="campaign.id"
+                                                                    t-att-data-name="campaign.name">
+                                                                    <t t-esc="campaign.name" />
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Medium -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="many2one"
+                                                    data-name="Medium">
+
+                                                    <label class="form-label" for="crm_medium_search">
+                                                        Medium
+                                                    </label>
+
+                                                    <input type="hidden"
+                                                        id="crm_medium_id"
+                                                        name="medium_id"
+                                                        class="s_website_form_input" />
+
+                                                    <div class="position-relative crm_medium_search_wrapper">
+                                                        <input type="text"
+                                                            id="crm_medium_search"
+                                                            class="form-control s_website_form_input"
+                                                            placeholder="Select Medium"
+                                                            autocomplete="off" />
+
+                                                        <div id="crm_medium_suggestions"
+                                                            class="crm_medium_suggestions_dropdown d-none">
+                                                            <t t-foreach="crm_mediums" t-as="medium">
+                                                                <div class="crm_medium_suggestion_item"
+                                                                    t-att-data-id="medium.id"
+                                                                    t-att-data-name="medium.name">
+                                                                    <t t-esc="medium.name" />
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Source -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="many2one"
+                                                    data-name="Source">
+
+                                                    <label class="form-label" for="crm_source_search">
+                                                        Source
+                                                    </label>
+
+                                                    <input type="hidden"
+                                                        id="crm_source_id"
+                                                        name="source_id"
+                                                        class="s_website_form_input" />
+
+                                                    <div class="position-relative crm_source_search_wrapper">
+                                                        <input type="text"
+                                                            id="crm_source_search"
+                                                            class="form-control s_website_form_input"
+                                                            placeholder="Select Source"
+                                                            autocomplete="off" />
+
+                                                        <div id="crm_source_suggestions"
+                                                            class="crm_source_suggestions_dropdown d-none">
+                                                            <t t-foreach="crm_sources" t-as="source">
+                                                                <div class="crm_source_suggestion_item"
+                                                                    t-att-data-id="source.id"
+                                                                    t-att-data-name="source.name">
+                                                                    <t t-esc="source.name" />
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Referred By -->
+                                                <div
+                                                    class="s_website_form_field mb-3 col-lg-6 col-12"
+                                                    data-type="char"
+                                                    data-name="Referred By">
+
+                                                    <label class="form-label" for="crm_referred">
+                                                        Referred By
+                                                    </label>
+
+                                                    <input type="text"
+                                                        id="crm_referred"
+                                                        name="referred"
+                                                        class="form-control s_website_form_input"
+                                                        placeholder="Enter referrer name" />
+                                                </div>
+
+
+                                                <!-- Description -->
+                                                <div class="s_website_form_field mb-3 col-12"
+                                                    data-type="text"
+                                                    data-name="Description">
+
+                                                    <label class="form-label"
+                                                        for="crm_description">
+                                                        Requirements / Notes
+                                                    </label>
+
+                                                    <textarea id="crm_description"
+                                                        name="description"
+                                                        class="form-control s_website_form_input"
+                                                        rows="5"
+                                                        placeholder="Write the customer's requirements..."></textarea>
+                                                </div>
+
+                                                <!-- Submit Button -->
+                                                <div class="mb-0 py-2 col-12 text-end">
+
+                                                    <button type="submit"
+                                                        class="btn btn-primary px-4">
+                                                        <i class="fa fa-paper-plane me-2" /> Submit
+                                                        Opportunity </button>
+
+                                                </div>
+
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+
+                                </section>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </t>
+    </template>
+
+</odoo>
