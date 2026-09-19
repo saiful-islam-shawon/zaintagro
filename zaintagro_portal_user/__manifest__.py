@@ -16,6 +16,7 @@
         "mail",
         "portal",
         "website",
+        "crm",
     ],
 
     "data": [
