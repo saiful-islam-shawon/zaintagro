@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_voucher_user,voucher user,model_account_voucher,group_voucher_user,1,1,1,1
+access_voucher_approver,voucher approver,model_account_voucher,group_voucher_approver,1,1,1,1
+access_voucher_manager,voucher manager,model_account_voucher,group_voucher_manager,1,1,1,1
+access_voucher_line_user,voucher line user,model_account_voucher_line,group_voucher_user,1,1,1,1
+access_voucher_line_approver,voucher line approver,model_account_voucher_line,group_voucher_approver,1,1,1,1
+access_voucher_line_manager,voucher line manager,model_account_voucher_line,group_voucher_manager,1,1,1,1
