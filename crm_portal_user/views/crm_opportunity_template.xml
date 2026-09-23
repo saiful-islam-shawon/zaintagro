@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="crm_opportunity_template" name="Create CRM Opportunity">
+
+        <t t-call="website.layout">
+
+            <t t-set="additional_title">Create Opportunity</t>
+
+            <div id="wrap" class="oe_structure crm_opportunity_page py-5">
+
+                <!-- Standard Container Wrapper -->
+                <div class="container">
+
+                    <!-- Success Banner -->
+                    <div t-if="request.params.get('success')"
+                         class="custom_success_banner mb-4">
+                        <div class="custom_success_icon">
+                            <i class="fa fa-check"/>
+                        </div>
+                        <div class="custom_success_text">
+                            <h5>Opportunity Submitted</h5>
+                            <p>The CRM opportunity has been created successfully.</p>
+                        </div>
+                    </div>
+
+                    <!-- Page Header -->
+                    <div class="mb-4">
+                        <h2 class="crm_section_title mb-1">
+                            <i class="fa fa-briefcase me-2"/>Create Opportunity
+                        </h2>
+                        <p class="text-muted mb-0 small">
+                            Fill in the customer information and requirements to register a new CRM deal.
+                        </p>
+                    </div>
+
+                    <form id="crm_opportunity_form"
+                          action="/crm/opportunity/submit"
+                          method="post"
+                          enctype="multipart/form-data"
+                          class="o_mark_required"
+                          data-mark="*">
+
+                        <input type="hidden"
+                               name="csrf_token"
+                               t-att-value="request.csrf_token()"/>
+
+                        <!-- Section 1: General Information -->
+                        <div class="crm_panel_card mb-4">
+                            <div class="crm_panel_header">
+                                <h5><i class="fa fa-info-circle me-2"/>General Information</h5>
+                            </div>
+                            <div class="crm_panel_body">
+                                <div class="row g-4">
+
+                                    <!-- Opportunity Title -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="crm_opportunity_name">
+                                            Opportunity Title <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-tag"/></span>
+                                            <input type="text"
+                                                   id="crm_opportunity_name"
+                                                   name="name"
+                                                   class="form-control"
+                                                   placeholder="e.g. ERP Implementation"
+                                                   required="required"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Contact Name -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="crm_contact_name">
+                                            Contact Name <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-user"/></span>
+                                            <input type="text"
+                                                   id="crm_contact_name"
+                                                   name="contact_name"
+                                                   class="form-control"
+                                                   placeholder="Primary customer contact"
+                                                   required="required"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Company -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="crm_company_name">
+                                            Company Name
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-building"/></span>
+                                            <input type="text"
+                                                   id="crm_company_name"
+                                                   name="partner_name"
+                                                   class="form-control"
+                                                   placeholder="Customer company name"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Job Position -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="crm_function">
+                                            Job Position
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-id-badge"/></span>
+                                            <input type="text"
+                                                   id="crm_function"
+                                                   name="function"
+                                                   class="form-control"
+                                                   placeholder="e.g. Managing Director"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="crm_email">
+                                            Email Address <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-envelope"/></span>
+                                            <input type="email"
+                                                   id="crm_email"
+                                                   name="email_from"
+                                                   class="form-control"
+                                                   placeholder="client@example.com"
+                                                   required="required"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Phone -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="crm_phone">
+                                            Phone Number
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-phone"/></span>
+                                            <input type="tel"
+                                                   id="crm_phone"
+                                                   name="phone"
+                                                   class="form-control"
+                                                   placeholder="+880 1XXXXXXXXX"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Website -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="crm_website">
+                                            Website
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-globe"/></span>
+                                            <input type="url"
+                                                   id="crm_website"
+                                                   name="website"
+                                                   class="form-control"
+                                                   placeholder="https://company.com"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Referred -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="crm_referred">
+                                            Referred By
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-user-plus"/></span>
+                                            <input type="text"
+                                                   id="crm_referred"
+                                                   name="referred"
+                                                   class="form-control"
+                                                   placeholder="Partner or referral source"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Revenue -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="crm_expected_revenue">
+                                            Expected Revenue
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text fw-bold">$</span>
+                                            <input type="number"
+                                                   id="crm_expected_revenue"
+                                                   name="expected_revenue"
+                                                   class="form-control"
+                                                   min="0"
+                                                   step="0.01"
+                                                   placeholder="0.00"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Closing Date -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="crm_date_deadline">
+                                            Expected Closing Date
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-calendar"/></span>
+                                            <input type="date"
+                                                   id="crm_date_deadline"
+                                                   name="date_deadline"
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tags -->
+                                    <div class="col-12">
+                                        <label class="form-label">Tags</label>
+                                        <input type="hidden"
+                                               id="crm_tag_ids"
+                                               name="tag_ids"
+                                               value=""/>
+
+                                        <div class="dropdown crm_tags_dropdown">
+                                            <div class="crm_tag_selector dropdown-toggle"
+                                                 id="crm_tag_selector"
+                                                 role="button"
+                                                 data-bs-toggle="dropdown"
+                                                 data-bs-auto-close="outside">
+                                                <div class="crm_selected_tags">
+                                                    <span class="crm_tag_placeholder">
+                                                        <i class="fa fa-tags me-1"/> Select tags...
+                                                    </span>
+                                                </div>
+                                                <i class="fa fa-angle-down crm_tag_dropdown_icon"/>
+                                            </div>
+
+                                            <div class="dropdown-menu crm_tags_dropdown_menu shadow">
+                                                <div class="crm_tag_search_wrapper">
+                                                    <i class="fa fa-search"/>
+                                                    <input type="text"
+                                                           class="form-control form-control-sm crm_tag_search"
+                                                           placeholder="Search tags..."/>
+                                                </div>
+
+                                                <div class="crm_tag_options">
+                                                    <t t-foreach="crm_tags" t-as="tag">
+                                                        <label class="crm_tag_option"
+                                                               t-att-data-tag-name="tag.name.lower()">
+                                                            <input type="checkbox"
+                                                                   class="crm_tag_option_input"
+                                                                   t-att-value="tag.id"
+                                                                   t-att-data-tag-name="tag.name"/>
+                                                            <span class="crm_tag_checkmark">
+                                                                <i class="fa fa-check"/>
+                                                            </span>
+                                                            <span class="crm_tag_option_name">
+                                                                <t t-esc="tag.name"/>
+                                                            </span>
+                                                        </label>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Address Information -->
+                        <div class="crm_panel_card mb-4">
+                            <div class="crm_panel_header">
+                                <h5><i class="fa fa-map-marker me-2"/>Address Information</h5>
+                            </div>
+                            <div class="crm_panel_body">
+                                <div class="row g-4">
+
+                                    <!-- Street -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label">Street Address</label>
+                                        <input type="text"
+                                               name="street"
+                                               class="form-control"
+                                               placeholder="House / Street line 1"
+                                               t-att-value="partner.street or ''"/>
+                                    </div>
+
+                                    <!-- Street 2 -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label">Street Line 2</label>
+                                        <input type="text"
+                                               name="street2"
+                                               class="form-control"
+                                               placeholder="Suite, unit, building floor"
+                                               t-att-value="partner.street2 or ''"/>
+                                    </div>
+
+                                    <!-- City -->
+                                    <div class="col-lg-4 col-12">
+                                        <label class="form-label">City</label>
+                                        <input type="text"
+                                               name="city"
+                                               class="form-control"
+                                               placeholder="City"
+                                               t-att-value="partner.city or ''"/>
+                                    </div>
+
+                                    <!-- ZIP -->
+                                    <div class="col-lg-4 col-12">
+                                        <label class="form-label">ZIP / Postal Code</label>
+                                        <input type="text"
+                                               name="zip"
+                                               class="form-control"
+                                               placeholder="ZIP Code"
+                                               t-att-value="partner.zip or ''"/>
+                                    </div>
+
+                                    <!-- Country -->
+                                    <div class="col-lg-4 col-12">
+                                        <label class="form-label" for="crm_country_search">Country</label>
+                                        <input type="hidden"
+                                               id="crm_country_id"
+                                               name="country_id"
+                                               t-att-value="partner.country_id.id if partner.country_id else ''"/>
+                                        <div class="position-relative crm_country_search_wrapper">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-search"/></span>
+                                                <input type="text"
+                                                       id="crm_country_search"
+                                                       class="form-control"
+                                                       autocomplete="off"
+                                                       placeholder="Select Country"
+                                                       t-att-value="partner.country_id.name if partner.country_id else ''"/>
+                                            </div>
+                                            <div id="crm_country_suggestions"
+                                                 class="crm_country_suggestions_dropdown d-none shadow">
+                                                <t t-foreach="crm_countries" t-as="country">
+                                                    <div class="crm_country_suggestion_item"
+                                                         t-att-data-id="country.id"
+                                                         t-att-data-name="country.name">
+                                                        <t t-esc="country.name"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- State -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="crm_state_search">State / Division</label>
+                                        <input type="hidden"
+                                               id="crm_state_id"
+                                               name="state_id"
+                                               t-att-value="partner.state_id.id if partner.state_id else ''"/>
+                                        <div class="position-relative crm_state_search_wrapper">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-search"/></span>
+                                                <input type="text"
+                                                       id="crm_state_search"
+                                                       class="form-control"
+                                                       autocomplete="off"
+                                                       placeholder="Select State"
+                                                       t-att-value="partner.state_id.name if partner.state_id else ''"/>
+                                            </div>
+                                            <div id="crm_state_suggestions"
+                                                 class="crm_state_suggestions_dropdown d-none shadow">
+                                                <t t-foreach="crm_states" t-as="state">
+                                                    <div class="crm_state_suggestion_item"
+                                                         t-att-data-id="state.id"
+                                                         t-att-data-name="state.name"
+                                                         t-att-data-country-id="state.country_id.id">
+                                                        <t t-esc="state.name"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Marketing Information -->
+                        <div class="crm_panel_card mb-4">
+                            <div class="crm_panel_header">
+                                <h5><i class="fa fa-bullhorn me-2"/>Marketing &amp; Tracking</h5>
+                            </div>
+                            <div class="crm_panel_body">
+                                <div class="row g-4">
+
+                                    <!-- Campaign -->
+                                    <div class="col-lg-4 col-12">
+                                        <label class="form-label">Campaign</label>
+                                        <input type="hidden" id="crm_campaign_id" name="campaign_id"/>
+                                        <div class="position-relative crm_campaign_search_wrapper">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-search"/></span>
+                                                <input type="text"
+                                                       id="crm_campaign_search"
+                                                       class="form-control"
+                                                       autocomplete="off"
+                                                       placeholder="Select Campaign"/>
+                                            </div>
+                                            <div id="crm_campaign_suggestions"
+                                                 class="crm_campaign_suggestions_dropdown d-none shadow">
+                                                <t t-foreach="crm_campaigns" t-as="campaign">
+                                                    <div class="crm_campaign_suggestion_item"
+                                                         t-att-data-id="campaign.id"
+                                                         t-att-data-name="campaign.name">
+                                                        <t t-esc="campaign.name"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Medium -->
+                                    <div class="col-lg-4 col-12">
+                                        <label class="form-label">Medium</label>
+                                        <input type="hidden" id="crm_medium_id" name="medium_id"/>
+                                        <div class="position-relative crm_medium_search_wrapper">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-search"/></span>
+                                                <input type="text"
+                                                       id="crm_medium_search"
+                                                       class="form-control"
+                                                       autocomplete="off"
+                                                       placeholder="Select Medium"/>
+                                            </div>
+                                            <div id="crm_medium_suggestions"
+                                                 class="crm_medium_suggestions_dropdown d-none shadow">
+                                                <t t-foreach="crm_mediums" t-as="medium">
+                                                    <div class="crm_medium_suggestion_item"
+                                                         t-att-data-id="medium.id"
+                                                         t-att-data-name="medium.name">
+                                                        <t t-esc="medium.name"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Source -->
+                                    <div class="col-lg-4 col-12">
+                                        <label class="form-label">Source</label>
+                                        <input type="hidden" id="crm_source_id" name="source_id"/>
+                                        <div class="position-relative crm_source_search_wrapper">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-search"/></span>
+                                                <input type="text"
+                                                       id="crm_source_search"
+                                                       class="form-control"
+                                                       autocomplete="off"
+                                                       placeholder="Select Source"/>
+                                            </div>
+                                            <div id="crm_source_suggestions"
+                                                 class="crm_source_suggestions_dropdown d-none shadow">
+                                                <t t-foreach="crm_sources" t-as="source">
+                                                    <div class="crm_source_suggestion_item"
+                                                         t-att-data-id="source.id"
+                                                         t-att-data-name="source.name">
+                                                        <t t-esc="source.name"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <div class="col-12">
+                                        <label class="form-label">Requirements / Notes</label>
+                                        <textarea name="description"
+                                                  class="form-control"
+                                                  rows="4"
+                                                  placeholder="Provide customer project details or background notes..."></textarea>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex align-items-center justify-content-end gap-3 pt-2">
+                            <button type="submit" class="btn btn-crm-submit px-4 py-2">
+                                <i class="fa fa-paper-plane me-2"/>Submit Opportunity
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </t>
+
+    </template>
+
+</odoo>

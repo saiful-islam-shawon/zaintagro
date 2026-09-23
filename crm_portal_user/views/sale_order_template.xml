@@ -6,1027 +6,760 @@
 
             <t t-set="additional_title">Sale Order</t>
 
-            <div id="wrap" class="oe_structure custom_dashboard_page">
+            <div id="wrap" class="oe_structure sale_order_page py-5">
 
-                <div class="container-fluid">
-                    <div class="row g-0">
+                <!-- container-fluid এর বদলে container ব্যবহার করা হয়েছে -->
+                <div class="container">
 
-                        <!-- Left Sidebar -->
-                        <div class="col-lg-2 col-md-3 custom_sidebar_column">
-                            <t t-set="active_menu" t-value="'sale_order'" />
-                            <t t-call="crm_portal_user.custom_left_sidebar" />
+                    <!-- Success Message -->
+                    <div t-if="request.params.get('success')"
+                         class="custom_success_banner mb-4">
+                        <div class="custom_success_icon">
+                            <i class="fa fa-check"/>
                         </div>
+                        <div class="custom_success_text">
+                            <h5>Sale Order Submitted</h5>
+                            <p>Your sale order request has been created successfully.</p>
+                        </div>
+                    </div>
 
-                        <!-- Main Content -->
-                        <div class="col-lg-10 col-md-9 custom_dashboard_content">
-                            <div class="custom_content_wrapper">
+                    <!-- Page Header -->
+                    <div class="mb-4">
+                        <h2 class="so_section_title mb-1">
+                            <i class="fa fa-shopping-cart me-2"/>Create Sale Order
+                        </h2>
+                        <p class="text-muted mb-0 small">
+                            Select customer, configure items and verify pricing details to issue a sale order.
+                        </p>
+                    </div>
 
-                                <!-- Success Message -->
-                                <div t-if="request.params.get('success')"
-                                    class="custom_success_banner">
-                                    <div class="custom_success_icon">
-                                        <i class="fa fa-check" />
+                    <!-- Main Form -->
+                    <form id="sale_order_form"
+                          action="/sale_order/submit"
+                          method="post"
+                          class="o_mark_required"
+                          data-mark="*">
+
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" id="so_order_lines_json" name="order_lines_json"/>
+                        <input type="hidden" id="so_discount_mode" name="discount_mode"/>
+                        <input type="hidden" id="so_global_discount_value" name="global_discount_value"/>
+
+                        <!-- Panel 1: Order Header Info -->
+                        <div class="so_panel_card mb-4">
+                            <div class="so_panel_header">
+                                <h5><i class="fa fa-id-card-o me-2"/>Customer &amp; Order Details</h5>
+                            </div>
+                            <div class="so_panel_body">
+                                <div class="row g-3">
+
+                                    <!-- Customer -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="so_customer_search">
+                                            Customer <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="hidden" id="so_customer_select" name="partner_id"/>
+                                        <div class="position-relative so_customer_search_wrapper">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-user"/></span>
+                                                <input type="text"
+                                                       id="so_customer_search"
+                                                       class="form-control"
+                                                       placeholder="Select Customer"
+                                                       autocomplete="off"
+                                                       required="required"/>
+                                            </div>
+                                            <div id="so_customer_suggestions"
+                                                 class="so_customer_suggestions_dropdown d-none shadow">
+                                                <t t-foreach="customers" t-as="customer">
+                                                    <div class="so_customer_suggestion_item"
+                                                         t-att-data-id="customer.id"
+                                                         t-att-data-name="customer.name">
+                                                        <t t-esc="customer.name"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="custom_success_text">
-                                        <h5>Sale Order Submitted</h5>
-                                        <p>Your sale order request has been created successfully.</p>
+
+                                    <!-- Expiration Date -->
+                                    <div class="col-lg-3 col-6">
+                                        <label class="form-label" for="so_validity_date">Expiration</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-calendar-times-o"/></span>
+                                            <input type="date"
+                                                   id="so_validity_date"
+                                                   name="validity_date"
+                                                   class="form-control"/>
+                                        </div>
                                     </div>
+
+                                    <!-- Quotation Date -->
+                                    <div class="col-lg-3 col-6">
+                                        <label class="form-label" for="so_date_order">Quotation Date</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-calendar"/></span>
+                                            <input type="datetime-local"
+                                                   id="so_date_order"
+                                                   name="date_order"
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Invoice Address -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="so_invoice_address">Invoice Address</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-file-text-o"/></span>
+                                            <select id="so_invoice_address"
+                                                    name="partner_invoice_id"
+                                                    class="form-select"
+                                                    disabled="disabled">
+                                                <option value="">Select customer first</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Delivery Address -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="so_delivery_address">Delivery Address</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-truck"/></span>
+                                            <select id="so_delivery_address"
+                                                    name="partner_shipping_id"
+                                                    class="form-select"
+                                                    disabled="disabled">
+                                                <option value="">Select customer first</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pricelist -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="so_pricelist_search">Pricelist</label>
+                                        <input type="hidden" id="so_pricelist_id" name="pricelist_id"/>
+                                        <div class="position-relative so_pricelist_search_wrapper">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-list-alt"/></span>
+                                                <input type="text"
+                                                       id="so_pricelist_search"
+                                                       class="form-control"
+                                                       placeholder="Select Pricelist"
+                                                       autocomplete="off"/>
+                                            </div>
+                                            <div id="so_pricelist_suggestions"
+                                                 class="so_pricelist_suggestions_dropdown d-none shadow">
+                                                <t t-foreach="pricelists" t-as="pricelist">
+                                                    <div class="so_pricelist_suggestion_item"
+                                                         t-att-data-id="pricelist.id"
+                                                         t-att-data-name="pricelist.name">
+                                                        <t t-esc="pricelist.name"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Payment Terms -->
+                                    <div class="col-lg-6 col-12">
+                                        <label class="form-label" for="so_payment_term_search">Payment Terms</label>
+                                        <input type="hidden" id="so_payment_term_id" name="payment_term_id"/>
+                                        <div class="position-relative so_payment_term_search_wrapper">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa fa-credit-card"/></span>
+                                                <input type="text"
+                                                       id="so_payment_term_search"
+                                                       class="form-control"
+                                                       placeholder="Select Payment Terms"
+                                                       autocomplete="off"/>
+                                            </div>
+                                            <div id="so_payment_term_suggestions"
+                                                 class="so_payment_term_suggestions_dropdown d-none shadow">
+                                                <t t-foreach="payment_terms" t-as="term">
+                                                    <div class="so_payment_term_suggestion_item"
+                                                         t-att-data-id="term.id"
+                                                         t-att-data-name="term.name">
+                                                        <t t-esc="term.name"/>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
-
-                                <div class="mb-4">
-                                    <h2 class="mb-1">Create Sale Order</h2>
-                                    <p class="text-muted mb-0">
-                                        Select products and quantities to request a new sale order.
-                                    </p>
-                                </div>
-
-                                <section>
-                                    <div class="container-fluid px-0">
-                                        
-
-                                        <!-- form -->
-                                        <form id="sale_order_form"
-                                            action="/sale_order/submit"
-                                            method="post"
-                                            class="o_mark_required">
-
-                                            <input type="hidden" name="csrf_token"
-                                                t-att-value="request.csrf_token()" />
-
-                                            <input type="hidden" id="so_order_lines_json" name="order_lines_json" />
-                                            <input type="hidden" id="so_discount_mode" name="discount_mode" />
-                                            <input type="hidden" id="so_global_discount_value" name="global_discount_value" />
-
-
-                                            <!-- Order Header Info -->
-                                            <div class="row g-3 mb-4">
-
-                                                <!-- Customer -->
-                                                <div class="col-lg-6 col-12">
-                                                    <label class="form-label"
-                                                        for="so_customer_select"> Customer <span
-                                                            class="text-danger">*</span>
-                                                    </label>
-                                                    <!-- <select id="so_customer_select"
-                                                        name="partner_id" class="form-select"
-                                                        required="required">
-                                                        <option value="">Select Customer</option>
-                                                        <t t-foreach="customers" t-as="customer">
-                                                            <option t-att-value="customer.id">
-                                                                <t t-esc="customer.name" />
-                                                            </option>
-                                                        </t>
-                                                    </select> -->
-
-                                                    <input type="hidden" id="so_customer_select" name="partner_id" />
-
-                                                    <div class="position-relative so_customer_search_wrapper">
-                                                        <input type="text"
-                                                            id="so_customer_search"
-                                                            class="form-control"
-                                                            placeholder="Select Customer"
-                                                            autocomplete="off"
-                                                            required="required" />
-
-                                                        <div id="so_customer_suggestions"
-                                                            class="so_customer_suggestions_dropdown d-none">
-                                                            <t t-foreach="customers" t-as="customer">
-                                                                <div class="so_customer_suggestion_item"
-                                                                    t-att-data-id="customer.id"
-                                                                    t-att-data-name="customer.name">
-                                                                    <t t-esc="customer.name" />
-                                                                </div>
-                                                            </t>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Expiration -->
-                                                <div class="col-lg-3 col-6">
-                                                    <label class="form-label" for="so_validity_date">
-                                                        Expiration</label>
-                                                    <input type="date" id="so_validity_date"
-                                                        name="validity_date" class="form-control" />
-                                                </div>
-
-                                                <!-- Quotation Date -->
-                                                <div class="col-lg-3 col-6">
-                                                    <label class="form-label" for="so_date_order">Quotation
-                                                        Date</label>
-                                                    <input type="datetime-local" id="so_date_order"
-                                                        name="date_order" class="form-control" />
-                                                </div>
-
-                                                <!-- Invoice Address -->
-                                                <div class="col-lg-6 col-12">
-                                                    <label class="form-label"
-                                                        for="so_invoice_address">Invoice Address</label>
-                                                    <select id="so_invoice_address"
-                                                        name="partner_invoice_id"
-                                                        class="form-select" disabled="disabled">
-                                                        <option value="">Select customer first</option>
-                                                    </select>
-                                                </div>
-
-                                                <!-- Delivery Address -->
-                                                <div class="col-lg-6 col-12">
-                                                    <label class="form-label"
-                                                        for="so_delivery_address">Delivery Address</label>
-                                                    <select id="so_delivery_address"
-                                                        name="partner_shipping_id"
-                                                        class="form-select" disabled="disabled">
-                                                        <option value="">Select customer first</option>
-                                                    </select>
-                                                </div>
-
-                                                <!-- Pricelist -->
-                                                <div class="col-lg-6 col-12">
-                                                    <label class="form-label" for="so_pricelist_search">
-                                                        Pricelist
-                                                    </label>
-                                                    <input type="hidden" id="so_pricelist_id" name="pricelist_id" />
-
-                                                    <div class="position-relative so_pricelist_search_wrapper">
-                                                        <input type="text"
-                                                            id="so_pricelist_search"
-                                                            class="form-control"
-                                                            placeholder="Select Pricelist"
-                                                            autocomplete="off" />
-
-                                                        <div id="so_pricelist_suggestions"
-                                                            class="so_pricelist_suggestions_dropdown d-none">
-                                                            <t t-foreach="pricelists" t-as="pricelist">
-                                                                <div class="so_pricelist_suggestion_item"
-                                                                    t-att-data-id="pricelist.id"
-                                                                    t-att-data-name="pricelist.name">
-                                                                    <t t-esc="pricelist.name" />
-                                                                </div>
-                                                            </t>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Payment Terms -->
-                                                <div class="col-lg-6 col-12">
-                                                    <label class="form-label" for="so_payment_term_search">
-                                                        Payment Terms
-                                                    </label>
-
-
-                                                    <input type="hidden" id="so_payment_term_id" name="payment_term_id" />
-
-                                                    <div class="position-relative so_payment_term_search_wrapper">
-                                                        <input type="text"
-                                                            id="so_payment_term_search"
-                                                            class="form-control"
-                                                            placeholder="Select Payment Terms"
-                                                            autocomplete="off" />
-
-                                                        <div id="so_payment_term_suggestions"
-                                                            class="so_payment_term_suggestions_dropdown d-none">
-                                                            <t t-foreach="payment_terms" t-as="term">
-                                                                <div class="so_payment_term_suggestion_item"
-                                                                    t-att-data-id="term.id"
-                                                                    t-att-data-name="term.name">
-                                                                    <t t-esc="term.name" />
-                                                                </div>
-                                                            </t>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-
-                                            <!-- Tabs -->
-                                            <ul class="nav nav-tabs so_form_tabs mb-3"
-                                                role="tablist">
-                                                <li class="nav-item" role="presentation">
-                                                    <button class="nav-link active"
-                                                        id="so_tab_lines_btn" data-bs-toggle="tab"
-                                                        data-bs-target="#so_tab_lines" type="button"
-                                                        role="tab">
-                                                        Order Lines
-                                                    </button>
-                                                </li>
-                                                <li class="nav-item" role="presentation">
-                                                    <button class="nav-link" id="so_tab_other_btn"
-                                                        data-bs-toggle="tab"
-                                                        data-bs-target="#so_tab_other" type="button"
-                                                        role="tab">
-                                                        Other Info
-                                                    </button>
-                                                </li>
-                                            </ul>
-
-                                            <div class="tab-content">
-
-                                                <!-- Order Lines Tab -->
-                                                <div class="tab-pane fade show active"
-                                                    id="so_tab_lines" role="tabpanel">
-
-                                                    <div class="table-responsive">
-                                                        <table
-                                                            class="table so_order_lines_table align-middle">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th style="width: 30%;">Product</th>
-                                                                    <th style="width: 9%;">Quantity</th>
-                                                                    <th style="width: 11%;">Unit Price</th>
-                                                                    <th style="width: 13%;">Taxes</th>
-                                                                    <th style="width: 8%;">Disc.%</th>
-                                                                    <th style="width: 12%;">Disc. Amount</th>
-                                                                    <th style="width: 12%;">Amount</th>
-                                                                    <th style="width: 5%;"></th>
-                                                                </tr>
-                                                            </thead>
-
-                                                            <tbody id="so_order_lines_container">
-
-                                                                <!-- one starting row -->
-                                                                <tr class="so_order_line_row">
-
-                                                                    <td>
-                                                                        <input type="hidden" name="product_id[]" class="so_product_id" />
-
-                                                                        <div class="position-relative so_product_search_wrapper">
-                                                                            <input type="text"
-                                                                                class="form-control so_product_search"
-                                                                                placeholder="Select Product"
-                                                                                autocomplete="off"
-                                                                                required="required" />
-
-                                                                            <div class="so_product_suggestions_dropdown d-none">
-                                                                                <t t-foreach="products" t-as="product">
-                                                                                    <div class="so_product_suggestion_item"
-                                                                                        t-att-data-id="product.id"
-                                                                                        t-att-data-name="product.name"
-                                                                                        t-att-data-price="product.list_price"
-                                                                                        t-att-data-tax-ids="product_tax_ids_map.get(product.id, '')"
-                                                                                        t-att-data-tax="product_tax_map.get(product.id, 0)">
-                                                                                        <t t-esc="product.name" />
-                                                                                    </div>
-                                                                                </t>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <input type="number"
-                                                                            name="quantity[]"
-                                                                            class="form-control so_qty_input"
-                                                                            min="1" step="1"
-                                                                            value="1"
-                                                                            required="required" />
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <input type="number"
-                                                                            name="unit_price[]"
-                                                                            class="form-control so_unit_price_display"
-                                                                            min="0"
-                                                                            step="0.01"
-                                                                            value="0.00" />
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <div class="dropdown so_tax_widget">
-                                                                            <button class="form-control so_tax_selector"
-                                                                                    type="button"
-                                                                                    data-bs-toggle="dropdown"
-                                                                                    data-bs-boundary="viewport">
-                                                                                <span class="so_tax_placeholder">0%</span>
-                                                                                <span class="so_tax_badges"></span>
-                                                                                <i class="fa fa-chevron-down so_tax_dropdown_icon" />
-                                                                            </button>
-
-                                                                            <div class="dropdown-menu so_tax_dropdown_menu">
-                                                                                <div class="so_tax_search_wrapper">
-                                                                                    <input type="text"
-                                                                                        class="form-control form-control-sm so_tax_search"
-                                                                                        placeholder="Search tax..."
-                                                                                        autocomplete="off" />
-                                                                                </div>
-
-                                                                                <div class="so_tax_options">
-                                                                                    <t t-foreach="taxes" t-as="tax">
-                                                                                        <label class="so_tax_option" t-att-data-name="tax.name">
-                                                                                            <input type="checkbox"
-                                                                                                class="so_tax_checkbox"
-                                                                                                t-att-value="tax.id"
-                                                                                                t-att-data-rate="tax.amount"
-                                                                                                t-att-data-name="tax.name" />
-                                                                                            <span class="so_tax_checkmark">
-                                                                                                <i class="fa fa-check" />
-                                                                                            </span>
-                                                                                            <span class="so_tax_option_name">
-                                                                                                <t t-esc="tax.name" />
-                                                                                            </span>
-                                                                                        </label>
-                                                                                    </t>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-
-                                                                    <!-- add discount -->
-                                                                    <td>
-                                                                        <input type="number"
-                                                                            name="discount[]"
-                                                                            class="form-control so_discount_input"
-                                                                            min="0"
-                                                                            max="100"
-                                                                            step="0.01"
-                                                                            value="0.00" />
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <input type="text"
-                                                                            class="form-control so_discount_amount_display"
-                                                                            value="0.00"
-                                                                            readonly="readonly" />
-                                                                    </td>
-
-                                                                    <td>
-                                                                        <input type="text"
-                                                                            class="form-control so_amount_display"
-                                                                            value="0.00"
-                                                                            readonly="readonly" />
-                                                                    </td>
-
-                                                                    <td class="text-end">
-                                                                        <button type="button"
-                                                                            class="btn btn-outline-danger btn-sm so_remove_line">
-                                                                            <i class="fa fa-trash" />
-                                                                        </button>
-                                                                    </td>
-
-                                                                </tr>
-
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-
-                                                    <button type="button" id="so_add_line"
-                                                        class="btn btn-outline-primary btn-sm mt-2">
-                                                        <i class="fa fa-plus me-1" /> Add Line </button>
-
-                                                    <!-- global tax, add shipping and tatal calculate -->
-                                                    <div class="so_order_summary text-end mt-3">
-                                                        <div class="so_total_actions mb-2">
-                                                            <button type="button"
-                                                                    class="btn btn-light btn-sm so_global_discount_btn"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#so_discount_modal">
-                                                                Discount
-                                                            </button>
-                                                            <button type="button" class="btn btn-light btn-sm so_shipping_btn d-none">
-                                                                Add shipping
-                                                            </button>
-                                                        </div>
-
-                                                        <div class="so_total_separator"></div>
-
-                                                        <div class="mb-1">Untaxed Amount: <span id="so_untaxed_total">0.00</span></div>
-
-                                                        <div class="mb-1 d-none" id="so_global_discount_row">
-                                                            Discount: -<span id="so_global_discount_total">0.00</span>
-                                                        </div>
-
-                                                        <div class="mb-1">Tax: <span id="so_tax_total">0.00</span></div>
-
-                                                        <div class="mb-1 d-none" id="so_shipping_row">
-                                                            Shipping: <span id="so_shipping_total">0.00</span>
-                                                        </div>
-
-                                                        <div class="so_total_separator"></div>
-
-                                                        <h5>Total: <span id="so_grand_total">0.00</span></h5>
-                                                    </div>
-
-                                                </div>
-
-                                                <!-- Other Info Tab (placeholder) -->
-                                                <div class="tab-pane fade" id="so_tab_other" role="tabpanel">
-
-                                                    <div class="row g-0 so_other_info_wrapper">
-
-                                                        <!-- SALES -->
-                                                        <div class="col-lg-6 col-12">
-                                                            <h6 class="so_other_info_title">SALES</h6>
-
-                                                            <div class="row g-3">
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_user_search">Salesperson</label>
-
-                                                                    <input type="hidden"
-                                                                        id="so_user_id"
-                                                                        name="user_id"
-                                                                        t-att-value="default_salesperson.id if default_salesperson else ''" />
-
-                                                                    <div class="position-relative so_user_search_wrapper">
-                                                                        <input type="text"
-                                                                            id="so_user_search"
-                                                                            class="form-control"
-                                                                            placeholder="Select Salesperson"
-                                                                            autocomplete="off"
-                                                                            t-att-value="default_salesperson.name if default_salesperson else ''" />
-
-                                                                        <div id="so_user_suggestions"
-                                                                            class="so_user_suggestions_dropdown d-none">
-                                                                            <t t-foreach="salespersons" t-as="user">
-                                                                                <div class="so_user_suggestion_item"
-                                                                                    t-att-data-id="user.id"
-                                                                                    t-att-data-name="user.name">
-                                                                                    <t t-esc="user.name" />
-                                                                                </div>
-                                                                            </t>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_team_search">Sales Team</label>
-
-                                                                    <input type="hidden"
-                                                                        id="so_team_id"
-                                                                        name="team_id"
-                                                                        t-att-value="default_sales_team.id if default_sales_team else ''" />
-
-                                                                    <div class="position-relative so_team_search_wrapper">
-                                                                        <input type="text"
-                                                                            id="so_team_search"
-                                                                            class="form-control"
-                                                                            placeholder="Select Sales Team"
-                                                                            autocomplete="off"
-                                                                            t-att-value="default_sales_team.name if default_sales_team else ''" />
-
-                                                                        <div id="so_team_suggestions"
-                                                                            class="so_team_suggestions_dropdown d-none">
-                                                                            <t t-foreach="sales_teams" t-as="team">
-                                                                                <div class="so_team_suggestion_item"
-                                                                                    t-att-data-id="team.id"
-                                                                                    t-att-data-name="team.name">
-                                                                                    <t t-esc="team.name" />
-                                                                                </div>
-                                                                            </t>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_company_id">Company</label>
-                                                                    <select id="so_company_id" name="company_id" class="form-select">
-                                                                        <t t-foreach="companies" t-as="company">
-                                                                            <option t-att-value="company.id"
-                                                                                t-att-selected="company.id == request.env.company.id">
-                                                                                <t t-esc="company.name" />
-                                                                            </option>
-                                                                        </t>
-                                                                    </select>
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <div class="form-check">
-                                                                        <input type="checkbox"
-                                                                            id="so_require_signature"
-                                                                            name="require_signature"
-                                                                            value="1"
-                                                                            class="form-check-input"
-                                                                            t-att-checked="'checked' if sale_defaults.get('require_signature') else None" />
-                                                                        <label class="form-check-label" for="so_require_signature">
-                                                                            Online signature
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <div class="form-check">
-                                                                        <input type="checkbox"
-                                                                            id="so_require_payment"
-                                                                            name="require_payment"
-                                                                            value="1"
-                                                                            class="form-check-input"
-                                                                            t-att-checked="'checked' if sale_defaults.get('require_payment') else None" />
-                                                                        <label class="form-check-label" for="so_require_payment">
-                                                                            Online payment
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_client_order_ref">
-                                                                        Customer Reference
-                                                                    </label>
-                                                                    <input type="text"
-                                                                        id="so_client_order_ref"
-                                                                        name="client_order_ref"
-                                                                        class="form-control" />
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_tag_ids">
-                                                                        Tags
-                                                                    </label>
-
-                                                                    <input type="hidden"
-                                                                        id="so_tag_ids"
-                                                                        name="tag_ids"
-                                                                        value="" />
-
-                                                                    <div class="dropdown so_tags_dropdown">
-
-                                                                        <div class="so_tag_selector dropdown-toggle"
-                                                                            id="so_tag_selector"
-                                                                            role="button"
-                                                                            data-bs-toggle="dropdown"
-                                                                            data-bs-auto-close="outside"
-                                                                            aria-expanded="false">
-
-                                                                            <div class="so_selected_tags">
-                                                                                <span class="so_tag_placeholder">
-                                                                                    Select tags...
-                                                                                </span>
-                                                                            </div>
-
-                                                                            <i class="fa fa-angle-down so_tag_dropdown_icon" />
-                                                                        </div>
-
-                                                                        <div class="dropdown-menu so_tags_dropdown_menu"
-                                                                            aria-labelledby="so_tag_selector">
-
-                                                                            <div class="so_tag_search_wrapper">
-                                                                                <i class="fa fa-search" />
-
-                                                                                <input type="text"
-                                                                                    class="form-control so_tag_search"
-                                                                                    placeholder="Search tags..." />
-                                                                            </div>
-
-                                                                            <div class="so_tag_options">
-                                                                                <t t-if="sale_tags">
-                                                                                    <t t-foreach="sale_tags" t-as="tag">
-                                                                                        <label class="so_tag_option"
-                                                                                            t-att-data-tag-name="tag.name.lower()">
-
-                                                                                            <input type="checkbox"
-                                                                                                class="so_tag_option_input"
-                                                                                                t-att-value="tag.id"
-                                                                                                t-att-data-tag-name="tag.name" />
-
-                                                                                            <span class="so_tag_checkmark">
-                                                                                                <i class="fa fa-check" />
-                                                                                            </span>
-
-                                                                                            <span class="so_tag_option_name">
-                                                                                                <t t-esc="tag.name" />
-                                                                                            </span>
-                                                                                        </label>
-                                                                                    </t>
-                                                                                </t>
-
-                                                                                <t t-else="">
-                                                                                    <div class="text-muted px-3 py-2">
-                                                                                        No tags are available.
-                                                                                    </div>
-                                                                                </t>
-                                                                            </div>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- INVOICING -->
-                                                        <div class="col-lg-6 col-12 so_other_info_invoicing">
-                                                            <h6 class="so_other_info_title">INVOICING</h6>
-
-                                                            <div class="row g-3">
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_fiscal_position_search">
-                                                                        Fiscal Position
-                                                                    </label>
-
-                                                                    <input type="hidden"
-                                                                        id="so_fiscal_position_id"
-                                                                        name="fiscal_position_id" />
-
-                                                                    <div class="position-relative so_fiscal_position_search_wrapper">
-                                                                        <input type="text"
-                                                                            id="so_fiscal_position_search"
-                                                                            class="form-control"
-                                                                            placeholder="Select Fiscal Position"
-                                                                            autocomplete="off" />
-
-                                                                        <div id="so_fiscal_position_suggestions"
-                                                                            class="so_fiscal_position_suggestions_dropdown d-none">
-                                                                            <t t-foreach="fiscal_positions" t-as="fp">
-                                                                                <div class="so_fiscal_position_suggestion_item"
-                                                                                    t-att-data-id="fp.id"
-                                                                                    t-att-data-name="fp.name">
-                                                                                    <t t-esc="fp.name" />
-                                                                                </div>
-                                                                            </t>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-                                                                
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_preferred_payment_method_line_id">
-                                                                        Payment Method
-                                                                    </label>
-
-                                                                    <select id="so_preferred_payment_method_line_id"
-                                                                        name="preferred_payment_method_line_id"
-                                                                        class="form-select">
-                                                                        <option value="">Select Payment Method</option>
-
-                                                                        <t t-foreach="payment_methods" t-as="method">
-                                                                            <option t-att-value="method.id">
-                                                                                <t t-esc="method.display_name" />
-                                                                            </option>
-                                                                        </t>
-                                                                    </select>
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_journal_id">
-                                                                        Invoicing Journal
-                                                                    </label>
-
-                                                                    <select id="so_journal_id"
-                                                                        name="journal_id"
-                                                                        class="form-select">
-                                                                        <option value="">Select Invoicing Journal</option>
-
-                                                                        <t t-foreach="invoice_journals" t-as="journal">
-                                                                            <option t-att-value="journal.id">
-                                                                                <t t-esc="journal.display_name" />
-                                                                            </option>
-                                                                        </t>
-                                                                    </select>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- DELIVERY -->
-                                                        <div class="col-lg-6 col-12 so_other_info_delivery">
-                                                            <h6 class="so_other_info_title">DELIVERY</h6>
-
-                                                            <div class="row g-3">
-                                                                <div class="col-12">
-                                                                    <label class="form-label">Shipping Weight</label>
-                                                                    <input type="text" class="form-control" value="0.00" readonly="readonly" />
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_warehouse_search">
-                                                                        Warehouse
-                                                                    </label>
-
-                                                                    <input type="hidden"
-                                                                        id="so_warehouse_id"
-                                                                        name="warehouse_id"
-                                                                        t-att-value="default_warehouse.id if default_warehouse else ''" />
-
-                                                                    <div class="position-relative so_warehouse_search_wrapper">
-                                                                        <input type="text"
-                                                                            id="so_warehouse_search"
-                                                                            class="form-control"
-                                                                            placeholder="Select Warehouse"
-                                                                            autocomplete="off"
-                                                                            t-att-value="default_warehouse.name if default_warehouse else ''" />
-
-                                                                        <div id="so_warehouse_suggestions"
-                                                                            class="so_warehouse_suggestions_dropdown d-none">
-                                                                            <t t-foreach="warehouses" t-as="warehouse">
-                                                                                <div class="so_warehouse_suggestion_item"
-                                                                                    t-att-data-id="warehouse.id"
-                                                                                    t-att-data-name="warehouse.name">
-                                                                                    <t t-esc="warehouse.name" />
-                                                                                </div>
-                                                                            </t>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_incoterm_search">
-                                                                        Incoterm
-                                                                    </label>
-
-                                                                    <input type="hidden"
-                                                                        id="so_incoterm"
-                                                                        name="incoterm" />
-
-                                                                    <div class="position-relative so_incoterm_search_wrapper">
-                                                                        <input type="text"
-                                                                            id="so_incoterm_search"
-                                                                            class="form-control"
-                                                                            placeholder="Select Incoterm"
-                                                                            autocomplete="off" />
-
-                                                                        <div id="so_incoterm_suggestions"
-                                                                            class="so_incoterm_suggestions_dropdown d-none">
-                                                                            <t t-foreach="incoterms" t-as="incoterm">
-                                                                                <div class="so_incoterm_suggestion_item"
-                                                                                    t-att-data-id="incoterm.id"
-                                                                                    t-att-data-name="incoterm.name">
-                                                                                    <t t-esc="incoterm.name" />
-                                                                                </div>
-                                                                            </t>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_incoterm_location">
-                                                                        Incoterm Location
-                                                                    </label>
-                                                                    <input type="text"
-                                                                        id="so_incoterm_location"
-                                                                        name="incoterm_location"
-                                                                        class="form-control" />
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_picking_policy">
-                                                                        Shipping Policy
-                                                                    </label>
-                                                                    <select id="so_picking_policy" name="picking_policy" class="form-select">
-                                                                        <t t-foreach="picking_policies" t-as="policy">
-                                                                            <option t-att-value="policy[0]"
-                                                                                t-att-selected="sale_defaults.get('picking_policy') and policy[0] == sale_defaults.get('picking_policy')">
-                                                                                <t t-esc="policy[1]" />
-                                                                            </option>
-                                                                        </t>
-                                                                    </select>
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_commitment_date">
-                                                                        Delivery Date
-                                                                    </label>
-                                                                    <input type="datetime-local"
-                                                                        id="so_commitment_date"
-                                                                        name="commitment_date"
-                                                                        class="form-control" />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- TRACKING -->
-                                                        <div class="col-lg-6 col-12 so_other_info_tracking">
-                                                            <h6 class="so_other_info_title">TRACKING</h6>
-
-                                                            <div class="row g-3">
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_origin">Source Document</label>
-                                                                    <input type="text" id="so_origin" name="origin" class="form-control" />
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_opportunity_search">
-                                                                        Opportunity
-                                                                    </label>
-
-                                                                    <input type="hidden"
-                                                                        id="so_opportunity_id"
-                                                                        name="opportunity_id" />
-
-                                                                    <div class="position-relative so_opportunity_search_wrapper">
-                                                                        <input type="text"
-                                                                            id="so_opportunity_search"
-                                                                            class="form-control"
-                                                                            placeholder="Select Opportunity"
-                                                                            autocomplete="off" />
-
-                                                                        <div id="so_opportunity_suggestions"
-                                                                            class="so_opportunity_suggestions_dropdown d-none">
-                                                                            <t t-foreach="opportunities" t-as="opportunity">
-                                                                                <div class="so_opportunity_suggestion_item"
-                                                                                    t-att-data-id="opportunity.id"
-                                                                                    t-att-data-name="opportunity.name">
-                                                                                    <t t-esc="opportunity.name" />
-                                                                                </div>
-                                                                            </t>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_campaign_search">
-                                                                        Campaign
-                                                                    </label>
-
-                                                                    <input type="hidden"
-                                                                        id="so_campaign_id"
-                                                                        name="campaign_id" />
-
-                                                                    <div class="position-relative so_campaign_search_wrapper">
-                                                                        <input type="text"
-                                                                            id="so_campaign_search"
-                                                                            class="form-control"
-                                                                            placeholder="Select Campaign"
-                                                                            autocomplete="off" />
-
-                                                                        <div id="so_campaign_suggestions"
-                                                                            class="so_campaign_suggestions_dropdown d-none">
-                                                                            <t t-foreach="utm_campaigns" t-as="campaign">
-                                                                                <div class="so_campaign_suggestion_item"
-                                                                                    t-att-data-id="campaign.id"
-                                                                                    t-att-data-name="campaign.name">
-                                                                                    <t t-esc="campaign.name" />
-                                                                                </div>
-                                                                            </t>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_medium_search">
-                                                                        Medium
-                                                                    </label>
-
-                                                                    <input type="hidden"
-                                                                        id="so_medium_id"
-                                                                        name="medium_id" />
-
-                                                                    <div class="position-relative so_medium_search_wrapper">
-                                                                        <input type="text"
-                                                                            id="so_medium_search"
-                                                                            class="form-control"
-                                                                            placeholder="Select Medium"
-                                                                            autocomplete="off" />
-
-                                                                        <div id="so_medium_suggestions"
-                                                                            class="so_medium_suggestions_dropdown d-none">
-                                                                            <t t-foreach="utm_mediums" t-as="medium">
-                                                                                <div class="so_medium_suggestion_item"
-                                                                                    t-att-data-id="medium.id"
-                                                                                    t-att-data-name="medium.name">
-                                                                                    <t t-esc="medium.name" />
-                                                                                </div>
-                                                                            </t>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-
-                                                                <div class="col-12">
-                                                                    <label class="form-label" for="so_source_search">
-                                                                        Source
-                                                                    </label>
-
-                                                                    <input type="hidden"
-                                                                        id="so_source_id"
-                                                                        name="source_id" />
-
-                                                                    <div class="position-relative so_source_search_wrapper">
-                                                                        <input type="text"
-                                                                            id="so_source_search"
-                                                                            class="form-control"
-                                                                            placeholder="Select Source"
-                                                                            autocomplete="off" />
-
-                                                                        <div id="so_source_suggestions"
-                                                                            class="so_source_suggestions_dropdown d-none">
-                                                                            <t t-foreach="utm_sources" t-as="source">
-                                                                                <div class="so_source_suggestion_item"
-                                                                                    t-att-data-id="source.id"
-                                                                                    t-att-data-name="source.name">
-                                                                                    <t t-esc="source.name" />
-                                                                                </div>
-                                                                            </t>
-                                                                        </div>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
-
-                                            <!-- Note -->
-                                            <div class="mb-3 mt-4">
-                                                <label class="form-label" for="so_note">Notes</label>
-                                                <textarea id="so_note" name="note"
-                                                    class="form-control" rows="4"
-                                                    placeholder="Any additional notes for this order..."></textarea>
-                                            </div>
-
-                                            <div class="text-end">
-                                                <button type="submit" class="btn btn-primary px-4">
-                                                    <i class="fa fa-paper-plane me-2" /> Submit Sale
-                                                    Order </button>
-                                            </div>
-
-
-                                            <!-- global discount -->
-                                            <div class="modal fade" id="so_discount_modal" tabindex="-1" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg modal-dialog-centered">
-                                                    <div class="modal-content">
-
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">Discount</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" />
-                                                        </div>
-
-                                                        <div class="modal-body">
-                                                            <div class="row align-items-start">
-                                                                <div class="col-md-2">
-                                                                    <label class="form-label mb-0">Discount</label>
-                                                                </div>
-
-                                                                <div class="col-md-3">
-                                                                    <div class="input-group">
-                                                                        <input type="number"
-                                                                            id="so_discount_value"
-                                                                            class="form-control"
-                                                                            min="0"
-                                                                            step="0.01"
-                                                                            value="0" />
-                                                                        <span class="input-group-text" id="so_discount_suffix">%</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-md-7">
-                                                                    <div class="form-check mb-2">
-                                                                        <input class="form-check-input"
-                                                                            type="radio"
-                                                                            name="so_discount_mode_choice"
-                                                                            id="so_discount_mode_lines"
-                                                                            value="line"
-                                                                            checked="checked" />
-                                                                        <label class="form-check-label" for="so_discount_mode_lines">
-                                                                            On All Order Lines
-                                                                        </label>
-                                                                    </div>
-
-                                                                    <div class="form-check mb-2">
-                                                                        <input class="form-check-input"
-                                                                            type="radio"
-                                                                            name="so_discount_mode_choice"
-                                                                            id="so_discount_mode_global"
-                                                                            value="global" />
-                                                                        <label class="form-check-label" for="so_discount_mode_global">
-                                                                            Global Discount
-                                                                        </label>
-                                                                    </div>
-
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input"
-                                                                            type="radio"
-                                                                            name="so_discount_mode_choice"
-                                                                            id="so_discount_mode_fixed"
-                                                                            value="fixed" />
-                                                                        <label class="form-check-label" for="so_discount_mode_fixed">
-                                                                            Fixed Amount
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="modal-footer justify-content-start">
-                                                            <button type="button"
-                                                                    id="so_apply_discount"
-                                                                    class="btn btn-primary"
-                                                                    data-bs-dismiss="modal">
-                                                                Apply
-                                                            </button>
-                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                                                                Discard
-                                                            </button>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                        </form>
-
-                                    </div>
-                                </section>
-
                             </div>
                         </div>
 
-                    </div>
+                        <!-- Panel 2: Tabs (Lines & Other Info) -->
+                        <div class="so_panel_card mb-4">
+                            <div class="so_panel_header border-0 pb-0">
+                                <ul class="nav nav-tabs so_form_tabs border-bottom-0" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active"
+                                                id="so_tab_lines_btn"
+                                                data-bs-toggle="tab"
+                                                data-bs-target="#so_tab_lines"
+                                                type="button"
+                                                role="tab">
+                                            <i class="fa fa-list me-2"/>Order Lines
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link"
+                                                id="so_tab_other_btn"
+                                                data-bs-toggle="tab"
+                                                data-bs-target="#so_tab_other"
+                                                type="button"
+                                                role="tab">
+                                            <i class="fa fa-info-circle me-2"/>Other Info
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="so_panel_body">
+                                <div class="tab-content">
+
+                                    <!-- TAB 1: Order Lines -->
+                                    <div class="tab-pane fade show active" id="so_tab_lines" role="tabpanel">
+                                        <div class="table-responsive so_table_wrapper mb-3">
+                                            <table class="table so_order_lines_table align-middle mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 32%;">Product</th>
+                                                        <th style="width: 10%;">Quantity</th>
+                                                        <th style="width: 12%;">Unit Price</th>
+                                                        <th style="width: 14%;">Taxes</th>
+                                                        <th style="width: 9%;">Disc.%</th>
+                                                        <th style="width: 11%;">Disc. Amount</th>
+                                                        <th style="width: 12%;">Amount</th>
+                                                        <th style="width: 4%;"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="so_order_lines_container">
+                                                    <tr class="so_order_line_row">
+                                                        <!-- Product -->
+                                                        <td>
+                                                            <input type="hidden" name="product_id[]" class="so_product_id"/>
+                                                            <div class="position-relative so_product_search_wrapper">
+                                                                <div class="input-group input-group-sm">
+                                                                    <span class="input-group-text"><i class="fa fa-cube"/></span>
+                                                                    <input type="text"
+                                                                           class="form-control so_product_search"
+                                                                           placeholder="Select Product"
+                                                                           autocomplete="off"
+                                                                           required="required"/>
+                                                                </div>
+                                                                <div class="so_product_suggestions_dropdown d-none shadow">
+                                                                    <t t-foreach="products" t-as="product">
+                                                                        <div class="so_product_suggestion_item"
+                                                                             t-att-data-id="product.id"
+                                                                             t-att-data-name="product.name"
+                                                                             t-att-data-price="product.list_price"
+                                                                             t-att-data-tax-ids="product_tax_ids_map.get(product.id, '')"
+                                                                             t-att-data-tax="product_tax_map.get(product.id, 0)">
+                                                                            <t t-esc="product.name"/>
+                                                                        </div>
+                                                                    </t>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+
+                                                        <!-- Qty -->
+                                                        <td>
+                                                            <input type="number"
+                                                                   name="quantity[]"
+                                                                   class="form-control form-control-sm so_qty_input text-center"
+                                                                   min="1"
+                                                                   step="1"
+                                                                   value="1"
+                                                                   required="required"/>
+                                                        </td>
+
+                                                        <!-- Unit Price -->
+                                                        <td>
+                                                            <input type="number"
+                                                                   name="unit_price[]"
+                                                                   class="form-control form-control-sm so_unit_price_display text-end"
+                                                                   min="0"
+                                                                   step="0.01"
+                                                                   value="0.00"/>
+                                                        </td>
+
+                                                        <!-- Taxes -->
+                                                        <td>
+                                                            <div class="dropdown so_tax_widget">
+                                                                <button class="form-control form-control-sm so_tax_selector d-flex align-items-center justify-content-between"
+                                                                        type="button"
+                                                                        data-bs-toggle="dropdown"
+                                                                        data-bs-boundary="viewport">
+                                                                    <span class="so_tax_placeholder text-muted">0%</span>
+                                                                    <span class="so_tax_badges"></span>
+                                                                    <i class="fa fa-chevron-down so_tax_dropdown_icon"/>
+                                                                </button>
+                                                                <div class="dropdown-menu so_tax_dropdown_menu shadow">
+                                                                    <div class="so_tax_search_wrapper">
+                                                                        <input type="text"
+                                                                               class="form-control form-control-sm so_tax_search"
+                                                                               placeholder="Search tax..."
+                                                                               autocomplete="off"/>
+                                                                    </div>
+                                                                    <div class="so_tax_options">
+                                                                        <t t-foreach="taxes" t-as="tax">
+                                                                            <label class="so_tax_option" t-att-data-name="tax.name">
+                                                                                <input type="checkbox"
+                                                                                       class="so_tax_checkbox me-2"
+                                                                                       t-att-value="tax.id"
+                                                                                       t-att-data-rate="tax.amount"
+                                                                                       t-att-data-name="tax.name"/>
+                                                                                <span class="so_tax_option_name small">
+                                                                                    <t t-esc="tax.name"/>
+                                                                                </span>
+                                                                            </label>
+                                                                        </t>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+
+                                                        <!-- Disc % -->
+                                                        <td>
+                                                            <input type="number"
+                                                                   name="discount[]"
+                                                                   class="form-control form-control-sm so_discount_input text-center"
+                                                                   min="0"
+                                                                   max="100"
+                                                                   step="0.01"
+                                                                   value="0.00"/>
+                                                        </td>
+
+                                                        <!-- Disc Amount -->
+                                                        <td>
+                                                            <input type="text"
+                                                                   class="form-control form-control-sm so_discount_amount_display text-end bg-light"
+                                                                   value="0.00"
+                                                                   readonly="readonly"/>
+                                                        </td>
+
+                                                        <!-- Subtotal -->
+                                                        <td>
+                                                            <input type="text"
+                                                                   class="form-control form-control-sm so_amount_display text-end bg-light fw-bold"
+                                                                   value="0.00"
+                                                                   readonly="readonly"/>
+                                                        </td>
+
+                                                        <!-- Action -->
+                                                        <td class="text-center">
+                                                            <button type="button" class="btn btn-outline-danger btn-sm so_remove_line p-1">
+                                                                <i class="fa fa-trash"/>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- Add Line & Total Section -->
+                                        <div class="row align-items-start mt-3">
+                                            <div class="col-md-6 mb-3 mb-md-0">
+                                                <button type="button" id="so_add_line" class="btn btn-add-line">
+                                                    <i class="fa fa-plus me-1"/>Add Line
+                                                </button>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="so_order_summary p-3 ms-auto rounded">
+                                                    <div class="mb-3 text-end">
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-outline-secondary so_global_discount_btn"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#so_discount_modal">
+                                                            <i class="fa fa-percent me-1"/>Apply Discount
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between py-1 text-muted small">
+                                                        <span>Untaxed Amount:</span>
+                                                        <span id="so_untaxed_total" class="fw-semibold text-dark">0.00</span>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between py-1 text-danger small d-none" id="so_global_discount_row">
+                                                        <span>Discount:</span>
+                                                        <span>- <span id="so_global_discount_total">0.00</span></span>
+                                                    </div>
+
+                                                    <div class="d-flex justify-content-between py-1 text-muted small">
+                                                        <span>Taxes:</span>
+                                                        <span id="so_tax_total" class="fw-semibold text-dark">0.00</span>
+                                                    </div>
+
+                                                    <div class="so_total_separator my-2"></div>
+
+                                                    <div class="d-flex justify-content-between align-items-center pt-1">
+                                                        <span class="fw-bold fs-6">Total Amount:</span>
+                                                        <span id="so_grand_total" class="fs-5 fw-bold so_total_highlight">0.00</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- TAB 2: Other Info -->
+                                    <div class="tab-pane fade" id="so_tab_other" role="tabpanel">
+                                        <div class="row g-4 so_other_info_wrapper">
+
+                                            <!-- SALES COLUMN -->
+                                            <div class="col-lg-6 col-12">
+                                                <h6 class="so_other_info_title">
+                                                    <i class="fa fa-briefcase me-2"/>SALES
+                                                </h6>
+                                                <div class="row g-3">
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_user_search">Salesperson</label>
+                                                        <input type="hidden" id="so_user_id" name="user_id"
+                                                               t-att-value="default_salesperson.id if default_salesperson else ''"/>
+                                                        <div class="position-relative so_user_search_wrapper">
+                                                            <input type="text"
+                                                                   id="so_user_search"
+                                                                   class="form-control"
+                                                                   placeholder="Select Salesperson"
+                                                                   autocomplete="off"
+                                                                   t-att-value="default_salesperson.name if default_salesperson else ''"/>
+                                                            <div id="so_user_suggestions" class="so_user_suggestions_dropdown d-none shadow">
+                                                                <t t-foreach="salespersons" t-as="user">
+                                                                    <div class="so_user_suggestion_item"
+                                                                         t-att-data-id="user.id"
+                                                                         t-att-data-name="user.name">
+                                                                        <t t-esc="user.name"/>
+                                                                    </div>
+                                                                </t>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_team_search">Sales Team</label>
+                                                        <input type="hidden" id="so_team_id" name="team_id"
+                                                               t-att-value="default_sales_team.id if default_sales_team else ''"/>
+                                                        <div class="position-relative so_team_search_wrapper">
+                                                            <input type="text"
+                                                                   id="so_team_search"
+                                                                   class="form-control"
+                                                                   placeholder="Select Sales Team"
+                                                                   autocomplete="off"
+                                                                   t-att-value="default_sales_team.name if default_sales_team else ''"/>
+                                                            <div id="so_team_suggestions" class="so_team_suggestions_dropdown d-none shadow">
+                                                                <t t-foreach="sales_teams" t-as="team">
+                                                                    <div class="so_team_suggestion_item"
+                                                                         t-att-data-id="team.id"
+                                                                         t-att-data-name="team.name">
+                                                                        <t t-esc="team.name"/>
+                                                                    </div>
+                                                                </t>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_company_id">Company</label>
+                                                        <select id="so_company_id" name="company_id" class="form-select">
+                                                            <t t-foreach="companies" t-as="company">
+                                                                <option t-att-value="company.id"
+                                                                        t-att-selected="company.id == request.env.company.id">
+                                                                    <t t-esc="company.name"/>
+                                                                </option>
+                                                            </t>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <div class="d-flex gap-4 pt-1">
+                                                            <div class="form-check">
+                                                                <input type="checkbox"
+                                                                       id="so_require_signature"
+                                                                       name="require_signature"
+                                                                       value="1"
+                                                                       class="form-check-input"
+                                                                       t-att-checked="'checked' if sale_defaults.get('require_signature') else None"/>
+                                                                <label class="form-check-label" for="so_require_signature">Online signature</label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input type="checkbox"
+                                                                       id="so_require_payment"
+                                                                       name="require_payment"
+                                                                       value="1"
+                                                                       class="form-check-input"
+                                                                       t-att-checked="'checked' if sale_defaults.get('require_payment') else None"/>
+                                                                <label class="form-check-label" for="so_require_payment">Online payment</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_client_order_ref">Customer Reference</label>
+                                                        <input type="text" id="so_client_order_ref" name="client_order_ref" class="form-control"/>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_tag_ids">Tags</label>
+                                                        <input type="hidden" id="so_tag_ids" name="tag_ids" value=""/>
+                                                        <div class="dropdown so_tags_dropdown">
+                                                            <div class="so_tag_selector dropdown-toggle"
+                                                                 id="so_tag_selector"
+                                                                 role="button"
+                                                                 data-bs-toggle="dropdown"
+                                                                 data-bs-auto-close="outside"
+                                                                 aria-expanded="false">
+                                                                <div class="so_selected_tags">
+                                                                    <span class="so_tag_placeholder text-muted">
+                                                                        <i class="fa fa-tags me-1"/>Select tags...
+                                                                    </span>
+                                                                </div>
+                                                                <i class="fa fa-angle-down so_tag_dropdown_icon"/>
+                                                            </div>
+                                                            <div class="dropdown-menu so_tags_dropdown_menu shadow" aria-labelledby="so_tag_selector">
+                                                                <div class="so_tag_search_wrapper">
+                                                                    <i class="fa fa-search"/>
+                                                                    <input type="text" class="form-control form-control-sm so_tag_search" placeholder="Search tags..."/>
+                                                                </div>
+                                                                <div class="so_tag_options">
+                                                                    <t t-if="sale_tags">
+                                                                        <t t-foreach="sale_tags" t-as="tag">
+                                                                            <label class="so_tag_option" t-att-data-tag-name="tag.name.lower()">
+                                                                                <input type="checkbox"
+                                                                                       class="so_tag_option_input"
+                                                                                       t-att-value="tag.id"
+                                                                                       t-att-data-tag-name="tag.name"/>
+                                                                                <span class="so_tag_option_name">
+                                                                                    <t t-esc="tag.name"/>
+                                                                                </span>
+                                                                            </label>
+                                                                        </t>
+                                                                    </t>
+                                                                    <t t-else="">
+                                                                        <div class="text-muted px-3 py-2 small">No tags available.</div>
+                                                                    </t>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- INVOICING & DELIVERY COLUMN -->
+                                            <div class="col-lg-6 col-12">
+                                                <h6 class="so_other_info_title">
+                                                    <i class="fa fa-file-text-o me-2"/>INVOICING
+                                                </h6>
+                                                <div class="row g-3 mb-4">
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_fiscal_position_search">Fiscal Position</label>
+                                                        <input type="hidden" id="so_fiscal_position_id" name="fiscal_position_id"/>
+                                                        <div class="position-relative so_fiscal_position_search_wrapper">
+                                                            <input type="text"
+                                                                   id="so_fiscal_position_search"
+                                                                   class="form-control"
+                                                                   placeholder="Select Fiscal Position"
+                                                                   autocomplete="off"/>
+                                                            <div id="so_fiscal_position_suggestions" class="so_fiscal_position_suggestions_dropdown d-none shadow">
+                                                                <t t-foreach="fiscal_positions" t-as="fp">
+                                                                    <div class="so_fiscal_position_suggestion_item"
+                                                                         t-att-data-id="fp.id"
+                                                                         t-att-data-name="fp.name">
+                                                                        <t t-esc="fp.name"/>
+                                                                    </div>
+                                                                </t>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_preferred_payment_method_line_id">Payment Method</label>
+                                                        <select id="so_preferred_payment_method_line_id" name="preferred_payment_method_line_id" class="form-select">
+                                                            <option value="">Select Payment Method</option>
+                                                            <t t-foreach="payment_methods" t-as="method">
+                                                                <option t-att-value="method.id">
+                                                                    <t t-esc="method.display_name"/>
+                                                                </option>
+                                                            </t>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_journal_id">Invoicing Journal</label>
+                                                        <select id="so_journal_id" name="journal_id" class="form-select">
+                                                            <option value="">Select Invoicing Journal</option>
+                                                            <t t-foreach="invoice_journals" t-as="journal">
+                                                                <option t-att-value="journal.id">
+                                                                    <t t-esc="journal.display_name"/>
+                                                                </option>
+                                                            </t>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <h6 class="so_other_info_title">
+                                                    <i class="fa fa-truck me-2"/>DELIVERY
+                                                </h6>
+                                                <div class="row g-3 mb-4">
+                                                    <div class="col-12">
+                                                        <label class="form-label">Shipping Weight</label>
+                                                        <input type="text" class="form-control bg-light" value="0.00" readonly="readonly"/>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_warehouse_search">Warehouse</label>
+                                                        <input type="hidden" id="so_warehouse_id" name="warehouse_id"
+                                                               t-att-value="default_warehouse.id if default_warehouse else ''"/>
+                                                        <div class="position-relative so_warehouse_search_wrapper">
+                                                            <input type="text"
+                                                                   id="so_warehouse_search"
+                                                                   class="form-control"
+                                                                   placeholder="Select Warehouse"
+                                                                   autocomplete="off"
+                                                                   t-att-value="default_warehouse.name if default_warehouse else ''"/>
+                                                            <div id="so_warehouse_suggestions" class="so_warehouse_suggestions_dropdown d-none shadow">
+                                                                <t t-foreach="warehouses" t-as="warehouse">
+                                                                    <div class="so_warehouse_suggestion_item"
+                                                                         t-att-data-id="warehouse.id"
+                                                                         t-att-data-name="warehouse.name">
+                                                                        <t t-esc="warehouse.name"/>
+                                                                    </div>
+                                                                </t>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_picking_policy">Shipping Policy</label>
+                                                        <select id="so_picking_policy" name="picking_policy" class="form-select">
+                                                            <t t-foreach="picking_policies" t-as="policy">
+                                                                <option t-att-value="policy[0]"
+                                                                        t-att-selected="sale_defaults.get('picking_policy') and policy[0] == sale_defaults.get('picking_policy')">
+                                                                    <t t-esc="policy[1]"/>
+                                                                </option>
+                                                            </t>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_commitment_date">Delivery Date</label>
+                                                        <input type="datetime-local" id="so_commitment_date" name="commitment_date" class="form-control"/>
+                                                    </div>
+                                                </div>
+
+                                                <h6 class="so_other_info_title">
+                                                    <i class="fa fa-compass me-2"/>TRACKING
+                                                </h6>
+                                                <div class="row g-3">
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_origin">Source Document</label>
+                                                        <input type="text" id="so_origin" name="origin" class="form-control"/>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <label class="form-label" for="so_opportunity_search">Opportunity</label>
+                                                        <input type="hidden" id="so_opportunity_id" name="opportunity_id"/>
+                                                        <div class="position-relative so_opportunity_search_wrapper">
+                                                            <input type="text"
+                                                                   id="so_opportunity_search"
+                                                                   class="form-control"
+                                                                   placeholder="Select Opportunity"
+                                                                   autocomplete="off"/>
+                                                            <div id="so_opportunity_suggestions" class="so_opportunity_suggestions_dropdown d-none shadow">
+                                                                <t t-foreach="opportunities" t-as="opportunity">
+                                                                    <div class="so_opportunity_suggestion_item"
+                                                                         t-att-data-id="opportunity.id"
+                                                                         t-att-data-name="opportunity.name">
+                                                                        <t t-esc="opportunity.name"/>
+                                                                    </div>
+                                                                </t>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 3: Notes & Submit Button -->
+                        <div class="so_panel_card mb-4">
+                            <div class="so_panel_body">
+                                <label class="form-label fw-bold" for="so_note">Terms and Conditions / Notes</label>
+                                <textarea id="so_note"
+                                          name="note"
+                                          class="form-control mb-4"
+                                          rows="3"
+                                          placeholder="Type internal terms, order conditions or client notes..."></textarea>
+
+                                <div class="d-flex justify-content-end align-items-center gap-3">
+                                    <button type="submit" class="btn btn-so-submit px-4 py-2">
+                                        <i class="fa fa-paper-plane me-2"/>Submit Sale Order
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Global Discount Modal -->
+                        <div class="modal fade" id="so_discount_modal" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-lg rounded-3">
+                                    <div class="modal-header border-bottom">
+                                        <h5 class="modal-title fw-bold" style="color: #0D508B;">
+                                            <i class="fa fa-percent me-2 text-success"/>Apply Discount
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"/>
+                                    </div>
+                                    <div class="modal-body p-4">
+                                        <div class="row g-3 align-items-center mb-3">
+                                            <div class="col-4">
+                                                <label class="form-label mb-0 fw-bold">Discount Value</label>
+                                            </div>
+                                            <div class="col-8">
+                                                <div class="input-group">
+                                                    <input type="number"
+                                                           id="so_discount_value"
+                                                           class="form-control"
+                                                           min="0"
+                                                           step="0.01"
+                                                           value="0"/>
+                                                    <span class="input-group-text fw-bold" id="so_discount_suffix">%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-3 rounded border bg-light">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="so_discount_mode_choice" id="so_discount_mode_lines" value="line" checked="checked"/>
+                                                <label class="form-check-label" for="so_discount_mode_lines">On All Order Lines</label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="so_discount_mode_choice" id="so_discount_mode_global" value="global"/>
+                                                <label class="form-check-label" for="so_discount_mode_global">Global Discount (%)</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="so_discount_mode_choice" id="so_discount_mode_fixed" value="fixed"/>
+                                                <label class="form-check-label" for="so_discount_mode_fixed">Fixed Amount</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-top bg-light">
+                                        <button type="button" id="so_apply_discount" class="btn btn-so-submit px-4" data-bs-dismiss="modal">Apply</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
                 </div>
 
             </div>

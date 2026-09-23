@@ -1,704 +1,695 @@
-#sale_order_form {
+// ============================================================
+// Brand Palette & Global Variables
+// ============================================================
+$so-heading-color: #0D508B;
+$so-text-color:    #333333;
+$so-primary-green: #71BF44;
+$so-hover-green:   #5fa637;
+$so-border-color:  #e5e7eb;
+$so-bg-soft:       #f8fafc;
 
-    .so_customer_search_wrapper {
-        position: relative;
-    }
-    .so_customer_suggestions_dropdown {
-        position: absolute;
-        z-index: 50;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_customer_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
-        }
+.sale_order_page {
+    min-height: 100vh;
+    background-color: #f6f8fb;
+    color: $so-text-color;
+
+    // Desktop/Web Centered Standard Container
+    .container {
+        max-width: 1320px;
     }
 
-    .so_tax_selector {
-        position: relative;
-        padding-right: 30px;
-    }
-
-    .so_tax_dropdown_icon {
-        position: absolute;
-        top: 50%;
-        right: 10px;
-
-        color: #8b8f94;
-        font-size: 11px;
-
-        transform: translateY(-50%);
-        pointer-events: none;
-    }
-
-    .so_tax_selector[aria-expanded="true"] .so_tax_dropdown_icon {
-        transform: translateY(-50%) rotate(180deg);
-    }
-
-    .so_global_discount_btn {
-        min-width: 95px;
-        padding: 7px 15px;
+    // Section Header Title
+    .so_section_title {
+        color: $so-heading-color;
         font-weight: 700;
-    }
+        font-size: 1.85rem;
 
-    .so_total_separator {
-        width: 190px;
-        margin: 8px 0 8px auto;
-        border-top: 1px solid #d8dadd;
-    }
-
-    // pricelist
-    .so_pricelist_search_wrapper {
-        position: relative;
-    }
-    .so_pricelist_suggestions_dropdown {
-        position: absolute;
-        z-index: 50;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_pricelist_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
+        i {
+            color: $so-primary-green;
         }
     }
 
-    // payterms
-
-    .so_payment_term_search_wrapper {
-        position: relative;
-    }
-    .so_payment_term_suggestions_dropdown {
-        position: absolute;
-        z-index: 50;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
+    // Panel Cards
+    .so_panel_card {
         background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_payment_term_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
+        border: 1px solid $so-border-color;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(13, 80, 139, 0.05);
+        overflow: visible !important;
+
+        .so_panel_header {
+            padding: 16px 24px;
+            background: #ffffff;
+            border-bottom: 1px solid $so-border-color;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+
+            h5 {
+                margin: 0;
+                font-size: 1.15rem;
+                font-weight: 600;
+                color: $so-heading-color;
+
+                i {
+                    color: $so-primary-green;
+                }
+            }
+        }
+
+        .so_panel_body {
+            padding: 24px;
+            overflow: visible !important;
         }
     }
 
-    // product
-    .so_product_search_wrapper {
-        position: relative;
+    // Form Controls
+    .form-label {
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: $so-text-color;
+        margin-bottom: 5px;
     }
-    .so_product_suggestions_dropdown {
-        position: absolute;
-        z-index: 60;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_product_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
+
+    .form-control, .form-select {
+        border-color: $so-border-color;
+        color: $so-text-color;
+        font-size: 0.92rem;
+        border-radius: 7px;
+        min-height: 40px;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+        &::placeholder {
+            color: #9ca3af;
+            font-size: 0.88rem;
+        }
+
+        &:focus {
+            border-color: $so-primary-green;
+            box-shadow: 0 0 0 3px rgba(113, 191, 68, 0.15);
         }
     }
 
-    // taxs
+    .input-group {
+        .input-group-text {
+            background-color: $so-bg-soft;
+            border-color: $so-border-color;
+            color: $so-heading-color;
+            font-size: 0.9rem;
+            min-width: 42px;
+            justify-content: center;
+        }
 
-    .so_tax_dropdown_menu {
-        min-width: 260px;
-        max-height: 280px;
-        padding: 8px;
-        overflow-y: auto;
-    }
-    .so_tax_search_wrapper {
-        position: sticky;
-        top: 0;
-        z-index: 2;
-        padding-bottom: 8px;
-        background: #ffffff;
-    }
-    .so_tax_options {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
+        &:focus-within .input-group-text {
+            border-color: $so-primary-green;
+            color: $so-primary-green;
+        }
     }
 
+    // Form Navigation Tabs
+    .so_form_tabs {
+        .nav-link {
+            font-size: 0.98rem;
+            font-weight: 600;
+            color: #64748b;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 10px 20px;
+            transition: all 0.2s ease;
 
-    // other info
+            i {
+                color: #94a3b8;
+            }
 
-    .so_other_info_wrapper {
-        padding-top: 16px;
+            &.active {
+                color: $so-heading-color;
+                background: transparent;
+                border-bottom: 3px solid $so-primary-green;
+
+                i {
+                    color: $so-primary-green;
+                }
+            }
+
+            &:hover:not(.active) {
+                color: $so-heading-color;
+                border-bottom: 3px solid #cbd5e1;
+            }
+        }
     }
+
+    // Table Styling (Desktop)
+    .so_table_wrapper {
+        border: 1px solid $so-border-color;
+        border-radius: 8px;
+        overflow: visible !important;
+    }
+
+    .so_order_lines_table {
+        width: 100%;
+
+        thead {
+            background-color: #f8fafc;
+            th {
+                color: $so-heading-color;
+                font-weight: 600;
+                font-size: 0.88rem;
+                padding: 12px 10px;
+                border-bottom: 1px solid $so-border-color;
+            }
+        }
+
+        tbody {
+            tr {
+                border-bottom: 1px solid $so-border-color;
+                &:last-child {
+                    border-bottom: none;
+                }
+            }
+
+            td {
+                padding: 10px 8px;
+                vertical-align: middle;
+            }
+        }
+    }
+
+    // Button Styling
+    .btn-add-line {
+        background-color: #f0fdf4;
+        color: $so-primary-green;
+        border: 1px dashed $so-primary-green;
+        font-weight: 600;
+        font-size: 0.92rem;
+        padding: 8px 18px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: $so-primary-green;
+            color: #ffffff;
+        }
+    }
+
+    .btn-so-submit {
+        background-color: $so-primary-green;
+        color: #ffffff;
+        border: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        padding: 9px 24px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: $so-hover-green;
+            color: #ffffff;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(113, 191, 68, 0.25);
+        }
+    }
+
+    // Order Summary Card
+    .so_order_summary {
+        background: #f8fafc;
+        border: 1px solid $so-border-color;
+        width: 100%;
+        max-width: 380px;
+
+        .so_total_separator {
+            border-top: 1px dashed #cbd5e1;
+        }
+
+        .so_total_highlight {
+            color: $so-heading-color;
+        }
+    }
+
+    // Sub-headings inside Other Info
     .so_other_info_title {
+        color: $so-heading-color;
+        font-size: 1.05rem;
+        font-weight: 700;
         padding-bottom: 8px;
         margin-bottom: 16px;
-        color: #1f2937;
-        font-size: 25px;
-        font-weight: 800;
-        text-transform: uppercase;
-        border-bottom: 1px solid #e5e7eb;
-    }
+        border-bottom: 2px solid #f1f5f9;
 
-
-    // tags in other info
-
-    .so_tags_dropdown {
-        width: 100%;
-    }
-    .so_tag_selector {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        min-height: 44px;
-        padding: 8px 12px;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        cursor: pointer;
-    }
-    .so_tag_selector[aria-expanded="true"] {
-        border-color: #017e84;
-        box-shadow: 0 0 0 1px rgba(1, 126, 132, 0.15);
-    }
-    .so_selected_tags {
-        display: flex;
-        flex: 1;
-        flex-wrap: wrap;
-        gap: 6px;
-    }
-    .so_tag_placeholder {
-        color: #8b8f94;
-        font-size: 15px;
-    }
-    .so_tags_dropdown_menu {
-        width: 100%;
-        max-height: 360px;
-        padding: 8px;
-        overflow: hidden;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_tag_search_wrapper {
-        position: sticky;
-        top: 0;
-        z-index: 2;
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-        background: #ffffff;
-        > i {
-            position: absolute;
-            left: 12px;
-            color: #8b8f94;
+        i {
+            color: $so-primary-green;
         }
     }
-    .so_tag_search {
-        height: 38px;
-        padding-left: 36px;
-        border: 1px solid #d8dadd;
-        border-radius: 5px;
-    }
-    .so_tag_options {
-        max-height: 285px;
-        overflow-y: auto;
-    }
-    .so_tag_option {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin: 0;
-        padding: 10px 10px;
-        color: #1f2937;
-        font-size: 14px;
-        border-radius: 4px;
-        cursor: pointer;
-        &:hover {
-            background: #eef3f4;
-        }
-    }
-    .so_tag_option_input {
-        position: static;
-        width: 18px;
-        height: 18px;
-        margin: 0;
-        opacity: 1;
-        pointer-events: auto;
-    }
-    .so_tag_checkmark {
-        display: none;
-    }
-    .so_selected_tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 3px 8px;
-        color: #263238;
-        font-size: 13px;
-        background: #b8e7e5;
-        border-radius: 12px;
-    }
-    .so_tag_remove {
-        font-size: 16px;
-        line-height: 1;
-        cursor: pointer;
-        &:hover {
-            color: #dc3545;
-        }
+}
+
+// ============================================================
+// Autocomplete & Searchable Dropdowns (Z-Index: 9999)
+// ============================================================
+.so_customer_search_wrapper,
+.so_pricelist_search_wrapper,
+.so_payment_term_search_wrapper,
+.so_product_search_wrapper,
+.so_user_search_wrapper,
+.so_team_search_wrapper,
+.so_fiscal_position_search_wrapper,
+.so_warehouse_search_wrapper,
+.so_incoterm_search_wrapper,
+.so_opportunity_search_wrapper,
+.so_campaign_search_wrapper,
+.so_medium_search_wrapper,
+.so_source_search_wrapper {
+    position: relative;
+    overflow: visible;
+}
+
+.so_customer_suggestions_dropdown,
+.so_pricelist_suggestions_dropdown,
+.so_payment_term_suggestions_dropdown,
+.so_product_suggestions_dropdown,
+.so_user_suggestions_dropdown,
+.so_team_suggestions_dropdown,
+.so_fiscal_position_suggestions_dropdown,
+.so_warehouse_suggestions_dropdown,
+.so_incoterm_suggestions_dropdown,
+.so_opportunity_suggestions_dropdown,
+.so_campaign_suggestions_dropdown,
+.so_medium_suggestions_dropdown,
+.so_source_suggestions_dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 9999 !important;
+    max-height: 220px;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid $so-border-color;
+    border-radius: 7px;
+    box-shadow: 0 10px 25px rgba(13, 80, 139, 0.12);
+}
+
+.so_customer_suggestion_item,
+.so_pricelist_suggestion_item,
+.so_payment_term_suggestion_item,
+.so_product_suggestion_item,
+.so_user_suggestion_item,
+.so_team_suggestion_item,
+.so_fiscal_position_suggestion_item,
+.so_warehouse_suggestion_item,
+.so_incoterm_suggestion_item,
+.so_opportunity_suggestion_item,
+.so_campaign_suggestion_item,
+.so_medium_suggestion_item,
+.so_source_suggestion_item {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    color: $so-text-color;
+    cursor: pointer;
+    background: #ffffff;
+    border-bottom: 1px solid #f8fafc;
+    transition: background 0.15s ease;
+
+    &:last-child {
+        border-bottom: none;
     }
 
+    &:hover {
+        background-color: #f1f5f9;
+        color: $so-heading-color;
+    }
+}
 
-    .so_tag_selector.dropdown-toggle::after {
+// Tags Selector Dropdown
+.so_tags_dropdown {
+    width: 100%;
+}
+
+.so_tag_selector {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 40px;
+    padding: 6px 36px 6px 12px;
+    background: #ffffff;
+    border: 1px solid $so-border-color;
+    border-radius: 7px;
+    cursor: pointer;
+
+    &::after {
         display: none !important;
     }
 
-    .so_other_info_delivery,
-    .so_other_info_tracking {
-        margin-top: 100px;
+    &[aria-expanded="true"] {
+        border-color: $so-primary-green;
+        box-shadow: 0 0 0 3px rgba(113, 191, 68, 0.15);
     }
-
-    .so_user_search_wrapper {
-        position: relative;
-    }
-    .so_user_suggestions_dropdown {
-        position: absolute;
-        z-index: 50;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_user_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
-        }
-    }
-
-
-    .so_team_search_wrapper {
-        position: relative;
-    }
-    .so_team_suggestions_dropdown {
-        position: absolute;
-        z-index: 50;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_team_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
-        }
-    }
-
-
-    .so_fiscal_position_search_wrapper {
-        position: relative;
-    }
-    .so_fiscal_position_suggestions_dropdown {
-        position: absolute;
-        z-index: 50;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_fiscal_position_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
-        }
-    }
-
-
-    .so_warehouse_search_wrapper {
-        position: relative;
-    }
-    .so_warehouse_suggestions_dropdown {
-        position: absolute;
-        z-index: 50;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_warehouse_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
-        }
-    }
-
-
-    .so_incoterm_search_wrapper {
-        position: relative;
-    }
-    .so_incoterm_suggestions_dropdown {
-        position: absolute;
-        z-index: 50;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_incoterm_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
-        }
-    }
-
-
-    .so_opportunity_search_wrapper {
-        position: relative;
-    }
-    .so_opportunity_suggestions_dropdown {
-        position: absolute;
-        z-index: 50;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_opportunity_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
-        }
-    }
-
-
-    .so_campaign_search_wrapper {
-        position: relative;
-    }
-    .so_campaign_suggestions_dropdown {
-        position: absolute;
-        z-index: 50;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_campaign_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
-        }
-    }
-
-
-
-    .so_medium_search_wrapper {
-        position: relative;
-    }
-    .so_medium_suggestions_dropdown {
-        position: absolute;
-        z-index: 50;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_medium_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
-        }
-    }
-
-
-    .so_source_search_wrapper {
-        position: relative;
-    }
-    .so_source_suggestions_dropdown {
-        position: absolute;
-        z-index: 50;
-        width: 100%;
-        max-height: 240px;
-        margin-top: 4px;
-        overflow-y: auto;
-        background: #ffffff;
-        border: 1px solid #d8dadd;
-        border-radius: 6px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-    .so_source_suggestion_item {
-        padding: 9px 12px;
-        cursor: pointer;
-        &:hover {
-            background: #f1f6f7;
-        }
-    }
-
-
 }
 
+.so_selected_tags {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 6px;
+}
 
-@media (min-width: 992px) {
-    #sale_order_form {
-        .so_other_info_wrapper {
-            display: flex;
-            column-gap: 120px;
-            row-gap: 32px;
+.so_selected_tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    color: $so-heading-color;
+    font-size: 12.5px;
+    font-weight: 500;
+    background: #e6f3fa;
+    border: 1px solid #bae0f7;
+    border-radius: 20px;
+}
+
+.so_tag_remove {
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    color: #64748b;
+
+    &:hover {
+        color: #ef4444;
+    }
+}
+
+.so_tag_dropdown_icon {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    color: $so-heading-color;
+    transform: translateY(-50%);
+}
+
+.so_tags_dropdown_menu {
+    width: 100%;
+    max-height: 280px;
+    padding: 8px;
+    border: 1px solid $so-border-color;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    z-index: 9999 !important;
+}
+
+.so_tag_search_wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    background: #ffffff;
+
+    > i {
+        position: absolute;
+        left: 12px;
+        color: #9ca3af;
+    }
+}
+
+.so_tag_search {
+    padding-left: 34px !important;
+}
+
+.so_tag_options {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.so_tag_option {
+    display: flex;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+
+    &:hover {
+        background: #f1f5f9;
+    }
+}
+
+// Taxes Multi-Dropdown
+.so_tax_dropdown_menu {
+    min-width: 240px;
+    max-height: 260px;
+    padding: 8px;
+    z-index: 9999 !important;
+    border: 1px solid $so-border-color;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.so_tax_option {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+        background: #f1f5f9;
+    }
+}
+
+// Custom Slim Scrollbars
+.so_customer_suggestions_dropdown,
+.so_pricelist_suggestions_dropdown,
+.so_payment_term_suggestions_dropdown,
+.so_product_suggestions_dropdown,
+.so_user_suggestions_dropdown,
+.so_team_suggestions_dropdown,
+.so_fiscal_position_suggestions_dropdown,
+.so_warehouse_suggestions_dropdown,
+.so_incoterm_suggestions_dropdown,
+.so_opportunity_suggestions_dropdown,
+.so_campaign_suggestions_dropdown,
+.so_medium_suggestions_dropdown,
+.so_source_suggestions_dropdown,
+.so_tag_options {
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+        background: #f8fafc;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+}
+
+// Success Banner
+.custom_success_banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(113, 191, 68, 0.08);
+
+    .custom_success_icon {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        color: #ffffff;
+        background: $so-primary-green;
+        border-radius: 50%;
+        font-size: 18px;
+    }
+
+    .custom_success_text {
+        h5 {
+            margin-bottom: 2px;
+            color: $so-heading-color;
+            font-size: 15px;
+            font-weight: 600;
         }
 
-        .so_other_info_wrapper > .col-lg-6 {
-            flex: 0 0 calc(50% - 60px);
-            max-width: calc(50% - 60px);
+        p {
+            margin: 0;
+            color: $so-text-color;
+            font-size: 13.5px;
         }
     }
 }
 
-
-
-
-// mobile view
-
+// ============================================================
+// Mobile Responsive View (Table to Card Transformation)
+// ============================================================
 @media (max-width: 767.98px) {
-    #sale_order_form {
-
-        // mobile view invoicing mergin add
-        .so_other_info_invoicing{
-            margin-top: 100px;
+    .sale_order_page {
+        .container {
+            padding-left: 12px;
+            padding-right: 12px;
         }
 
-        .table-responsive {
-            overflow: visible;
+        .so_panel_card {
+            .so_panel_header {
+                padding: 12px 16px;
+            }
+            .so_panel_body {
+                padding: 14px;
+            }
+        }
+
+        .so_table_wrapper {
+            border: none;
+            overflow: visible !important;
         }
 
         .so_order_lines_table {
             border: 0;
+            width: 100%;
 
+            // Hide the desktop table headers
             thead {
                 display: none;
             }
 
             tbody {
                 display: block;
+                width: 100%;
             }
 
+            // Convert each table row into an independent card
             .so_order_line_row {
                 display: block;
-
-                padding: 14px;
-                margin-bottom: 14px;
-
+                padding: 16px;
+                margin-bottom: 16px;
                 background: #ffffff;
                 border: 1px solid #e5e7eb;
                 border-radius: 10px;
-                box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
-            }
+                box-shadow: 0 4px 12px rgba(13, 80, 139, 0.06);
 
-            .so_order_line_row td {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 12px;
+                td {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 12px;
+                    width: 100%;
+                    padding: 8px 0;
+                    border: 0;
 
-                width: 100%;
-                padding: 8px 0;
+                    // Left-hand side label
+                    &::before {
+                        flex: 0 0 38%;
+                        color: #0D508B;
+                        font-size: 0.88rem;
+                        font-weight: 600;
+                    }
 
-                border: 0;
-            }
+                    // Input wrappers span full remaining width
+                    > input,
+                    > .input-group,
+                    > .dropdown,
+                    > .so_product_search_wrapper {
+                        flex: 1;
+                        min-width: 0;
+                        width: 100%;
+                    }
+                }
 
-            .so_order_line_row td::before {
-                flex: 0 0 38%;
-                color: #374151;
-                font-size: 13px;
-                font-weight: 700;
-            }
+                // 1. Product (Column orientation for more width)
+                td:nth-child(1) {
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 6px;
+                    padding-top: 0;
 
-            .so_order_line_row td:nth-child(1)::before {
-                content: "Product";
-            }
+                    &::before {
+                        content: "Product";
+                        width: 100%;
+                        flex: none;
+                    }
 
-            .so_order_line_row td:nth-child(2)::before {
-                content: "Quantity";
-            }
+                    .so_product_search_wrapper {
+                        width: 100%;
+                    }
+                }
 
-            .so_order_line_row td:nth-child(3)::before {
-                content: "Unit Price";
-            }
+                // 2. Quantity
+                td:nth-child(2)::before {
+                    content: "Quantity";
+                }
 
-            .so_order_line_row td:nth-child(4)::before {
-                content: "Taxes";
-            }
+                // 3. Unit Price
+                td:nth-child(3)::before {
+                    content: "Unit Price";
+                }
 
-            .so_order_line_row td:nth-child(5)::before {
-                content: "Disc.%";
-            }
+                // 4. Taxes
+                td:nth-child(4)::before {
+                    content: "Taxes";
+                }
 
-            .so_order_line_row td:nth-child(6)::before {
-                content: "Disc. Amount";
-            }
+                // 5. Disc.%
+                td:nth-child(5)::before {
+                    content: "Disc.%";
+                }
 
-            .so_order_line_row td:nth-child(7)::before {
-                content: "Amount";
-            }
+                // 6. Disc. Amount
+                td:nth-child(6)::before {
+                    content: "Disc. Amount";
+                }
 
-            .so_order_line_row td:nth-child(8) {
-                justify-content: flex-end;
-                padding-top: 12px;
-            }
+                // 7. Amount
+                td:nth-child(7)::before {
+                    content: "Amount";
+                    font-weight: 700;
+                }
 
-            .so_order_line_row td:nth-child(8)::before {
-                content: "";
-                display: none;
-            }
+                // 8. Delete Action
+                td:nth-child(8) {
+                    justify-content: flex-end;
+                    padding-top: 10px;
+                    margin-top: 6px;
+                    border-top: 1px dashed #e5e7eb;
 
-            .so_order_line_row td > input,
-            .so_order_line_row td > select,
-            .so_order_line_row td > .dropdown,
-            .so_order_line_row td > .so_product_search_wrapper {
-                flex: 1;
-                min-width: 0;
+                    &::before {
+                        content: "";
+                        display: none;
+                    }
+
+                    .so_remove_line {
+                        width: auto;
+                        padding: 6px 14px;
+                    }
+                }
             }
         }
 
+        // Dropdown safe floating inside mobile cards
         .so_product_suggestions_dropdown,
         .so_tax_dropdown_menu {
-            z-index: 3000;
+            position: absolute;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 9999 !important;
         }
 
         #so_add_line {
             width: 100%;
-            margin-top: 4px;
+            padding: 10px;
+            font-size: 0.95rem;
         }
 
         .so_order_summary {
-            width: 100%;
-            margin-top: 20px;
+            max-width: 100%;
+            margin-top: 16px;
         }
 
-        .so_total_actions {
-            display: flex;
-            justify-content: flex-end;
-        }
-    }
-}
-
-
-
-
-@media (max-width: 767.98px) {
-    #sale_order_form {
-        .so_order_line_row td:nth-child(1) {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 7px;
-        }
-
-        .so_order_line_row td:nth-child(1)::before {
-            flex: none;
-            width: 100%;
-        }
-
-        .so_order_line_row td:nth-child(1) .so_product_search_wrapper {
-            width: 100%;
-            flex: none;
-        }
-
-        .so_product_search {
-            height: 42px;
-            font-size: 14px;
-            border-radius: 8px;
-        }
-
-        .so_product_suggestions_dropdown {
-            left: 0;
-            right: 0;
-            width: 100%;
-            max-height: 230px;
-            margin-top: 6px;
-
-            overflow-y: auto;
-            background: #ffffff;
-            border: 1px solid #d8dadd;
-            border-radius: 10px;
-            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
-
-            z-index: 4000;
-        }
-
-        .so_product_suggestion_item {
-            padding: 11px 13px;
-            font-size: 14px;
-            line-height: 1.35;
-
-            &:hover {
-                background: #eefafa;
-            }
+        .so_other_info_invoicing,
+        .so_other_info_delivery,
+        .so_other_info_tracking {
+            margin-top: 24px !important;
         }
     }
 }

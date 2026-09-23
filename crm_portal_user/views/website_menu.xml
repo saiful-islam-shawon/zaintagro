@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- =========================================================
+         CRM Menu
+    ========================================================== -->
+    <record id="website_menu_crm" model="website.menu">
+        <field name="name">CRM</field>
+        <field name="url">/create_crm</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">40</field>
+
+        <field name="group_ids"
+               eval="[(6, 0, [ref('crm_portal_user.group_crm_website_access')])]"/>
+    </record>
+
+
+    <!-- =========================================================
+         Sales Menu
+    ========================================================== -->
+    <record id="website_menu_sales" model="website.menu">
+        <field name="name">Sales</field>
+        <field name="url">/sale_order</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">50</field>
+
+        <field name="group_ids"
+               eval="[(6, 0, [ref('crm_portal_user.group_sales_website_access')])]"/>
+    </record>
+
+</odoo>
