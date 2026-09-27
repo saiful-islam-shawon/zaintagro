@@ -1,0 +1,1262 @@
+
+<odoo>
+    <!--  ==========================================================
+        PORTAL HOME - CRM CARD
+    ==========================================================  -->
+    <template id="portal_my_home_crm" name="Portal My Home - CRM Card"
+        inherit_id="portal.portal_my_home">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-if="has_crm_portal_access">
+                <div class="o_portal_category col-12 col-md-6 mb-4">
+                    <a href="/my/crm/opportunities"
+                        class="o_portal_index_card fpm-crm-home-card d-block w-100 h-100 text-decoration-none">
+                        <div class="fpm-crm-home-card-body">
+                            <div class="fpm-crm-home-icon">
+                                <i class="fa fa-briefcase" />
+                            </div>
+                            <div class="fpm-crm-home-content">
+                                <div class="fpm-crm-home-title"> My CRM Opportunities </div>
+                                <div class="fpm-crm-home-subtitle">
+                                    <strong>
+                                        <span data-placeholder_count="crm_opportunity_count" />
+                                    </strong>
+                                    opportunity(s) created </div>
+                            </div>
+                            <div class="fpm-crm-home-arrow">
+                                <i class="fa fa-angle-right" />
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </t>
+        </xpath>
+    </template>
+    <!--  ==========================================================
+        CRM OPPORTUNITY LIST
+    ==========================================================  -->
+    <template id="portal_my_crm_opportunities" name="My CRM Opportunities">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True" />
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">My CRM Opportunities</t>
+            </t>
+            <!--  ==================================================
+                SEARCH
+            ===================================================  -->
+            <div id="fpmCrmOpportunitySearchWrapper" class="mb-4">
+                <form action="/my/crm/opportunities" method="get" class="fpm-crm-search-form">
+                    <input type="hidden" name="sortby" t-att-value="sortby" />
+                    <div class="fpm-crm-search-box">
+                        <span class="fpm-crm-search-icon">
+                            <i class="fa fa-search" />
+                        </span>
+                        <input type="search" name="search" class="fpm-crm-search-input"
+                            t-att-value="search" placeholder="Search opportunities..." />
+                        <a t-if="search" t-attf-href="/my/crm/opportunities?sortby=#{sortby}"
+                            class="fpm-crm-search-clear" title="Clear search">
+                            <i class="fa fa-times" />
+                        </a>
+                        <button type="submit" class="btn btn-primary fpm-crm-search-button">
+                            <i class="fa fa-search me-1" />
+                            <span>Search</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!--  ==================================================
+                EMPTY STATE
+            ===================================================  -->
+            <t t-if="not opportunities">
+                <div class="fpm-crm-empty-state">
+                    <t t-if="search">
+                        <div class="fpm-crm-empty-icon">
+                            <i class="fa fa-search" />
+                        </div>
+                        <h4>No matching opportunities</h4>
+                        <p> No opportunities found for <strong> “ <t t-esc="search" /> ” </strong> . </p>
+                    </t>
+                    <t t-else="">
+                        <div class="fpm-crm-empty-icon">
+                            <i class="fa fa-folder-open-o" />
+                        </div>
+                        <h4>No opportunities yet</h4>
+                        <p> Get started by creating your first CRM opportunity. </p>
+                    </t>
+                </div>
+            </t>
+            <!--  ==================================================
+                OPPORTUNITIES TABLE
+            ===================================================  -->
+            <t t-if="opportunities">
+                <div id="fpmCrmOpportunityList" class="fpm-crm-opportunity-table-wrapper">
+                    <table id="fpmCrmOpportunityTable"
+                        class="table o_portal_my_doc_table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="fpm-crm-select-column">
+                                    <input id="fpmCrmSelectAll" class="form-check-input"
+                                        type="checkbox" title="Select all" />
+                                </th>
+                                <th>Opportunity</th>
+                                <th>Email</th>
+                                <th class="fpm-crm-optional-column" data-column="created_on">
+                                    Created on </th>
+                                <th class="fpm-crm-optional-column" data-column="contact"> Contact </th>
+                                <th class="fpm-crm-optional-column" data-column="contact_name">
+                                    Contact Name </th>
+                                <th class="fpm-crm-optional-column" data-column="phone"> Phone </th>
+                                <th class="fpm-crm-optional-column" data-column="city"> City </th>
+                                <th class="fpm-crm-optional-column" data-column="state"> State </th>
+                                <th class="fpm-crm-optional-column" data-column="country"> Country </th>
+                                <th class="fpm-crm-optional-column" data-column="salesperson">
+                                    Salesperson </th>
+                                <th class="fpm-crm-optional-column" data-column="sales_team"> Sales
+                                    Team </th>
+                                <th class="fpm-crm-optional-column" data-column="priority"> Priority </th>
+                                <th class="fpm-crm-optional-column" data-column="activities">
+                                    Activities </th>
+                                <th class="fpm-crm-optional-column" data-column="activity_by">
+                                    Activity by </th>
+                                <th class="fpm-crm-optional-column" data-column="my_deadline"> My
+                                    Deadline </th>
+                                <th class="fpm-crm-optional-column" data-column="campaign"> Campaign </th>
+                                <th class="fpm-crm-optional-column" data-column="medium"> Medium </th>
+                                <th class="fpm-crm-optional-column" data-column="source"> Source </th>
+                                <th class="fpm-crm-optional-column text-end"
+                                    data-column="expected_revenue"> Expected Revenue </th>
+                                <th class="fpm-crm-optional-column" data-column="expected_closing">
+                                    Expected Closing </th>
+                                <th class="fpm-crm-optional-column" data-column="stage"> Stage </th>
+                                <th class="fpm-crm-optional-column" data-column="probability">
+                                    Probability (%) </th>
+                                <th class="fpm-crm-optional-column" data-column="lost_reason"> Lost
+                                    Reason </th>
+                                <th class="fpm-crm-optional-column" data-column="tags"> Tags </th>
+                                <!--  COLUMN SETTINGS  -->
+                                <th class="fpm-crm-settings-column">
+                                    <div class="dropdown">
+                                        <button type="button" id="fpmCrmOptionalColumnsButton"
+                                            aria-expanded="false" title="Optional columns">
+                                            <i class="fa fa-sliders" />
+                                        </button>
+                                        <div
+                                            class="dropdown-menu dropdown-menu-end fpm-crm-optional-menu"
+                                            aria-labelledby="fpmCrmOptionalColumnsButton">
+                                            <div class="fpm-crm-column-menu-title">
+                                                <i class="fa fa-columns me-2" /> Optional Columns </div>
+                                            <t
+                                                t-foreach="[ ('created_on','crmColCreated','Created on',False), ('contact','crmColContact','Contact',False), ('contact_name','crmColContactName','Contact Name',True), ('phone','crmColPhone','Phone',False), ('city','crmColCity','City',False), ('state','crmColState','State',False), ('country','crmColCountry','Country',False), ('salesperson','crmColSalesperson','Salesperson',True), ('sales_team','crmColSalesTeam','Sales Team',False), ('priority','crmColPriority','Priority',False), ('activities','crmColActivities','Activities',False), ('activity_by','crmColActivityBy','Activity by',False), ('my_deadline','crmColDeadline','My Deadline',False), ('campaign','crmColCampaign','Campaign',False), ('medium','crmColMedium','Medium',False), ('source','crmColSource','Source',False), ('expected_revenue','crmColRevenue','Expected Revenue',True), ('expected_closing','crmColClosing','Expected Closing',False), ('stage','crmColStage','Stage',True), ('probability','crmColProbability','Probability (%)',False), ('lost_reason','crmColLostReason','Lost Reason',False), ('tags','crmColTags','Tags',False) ]"
+                                                t-as="column">
+                                                <div class="form-check">
+                                                    <input
+                                                        class="form-check-input fpm-crm-column-toggle"
+                                                        type="checkbox" t-att-value="column[0]"
+                                                        t-att-id="column[1]"
+                                                        t-att-checked="column[3] and 'checked' or None" />
+                                                    <label class="form-check-label"
+                                                        t-att-for="column[1]">
+                                                        <t t-esc="column[2]" />
+                                                    </label>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <!--  ==================================================
+                            TABLE BODY
+                        ===================================================  -->
+                        <tbody>
+                            <tr t-foreach="opportunities" t-as="opportunity"
+                                class="fpm-crm-opportunity-row"
+                                t-attf-data-url="/my/crm/opportunities/#{opportunity.id}">
+                                <td>
+                                    <input class="form-check-input fpm-crm-row-checkbox"
+                                        type="checkbox" t-att-value="opportunity.id" />
+                                </td>
+                                <td>
+                                    <a t-attf-href="/my/crm/opportunities/#{opportunity.id}"
+                                        class="fpm-crm-opportunity-name">
+                                        <t t-esc="opportunity.name" />
+                                    </a>
+                                </td>
+                                <td class="text-muted">
+                                    <t t-esc="opportunity.email_from" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="created_on">
+                                    <span t-field="opportunity.create_date"
+                                        t-options="{'widget':'datetime'}" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="contact">
+                                    <t t-esc="opportunity.partner_id.name" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="contact_name">
+                                    <t t-esc="opportunity.contact_name" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="phone">
+                                    <t t-esc="opportunity.phone" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="city">
+                                    <t t-esc="opportunity.city" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="state">
+                                    <t t-esc="opportunity.state_id.name" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="country">
+                                    <t t-esc="opportunity.country_id.name" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="salesperson">
+                                    <div t-if="opportunity.user_id" class="fpm-crm-salesperson">
+                                        <img
+                                            t-att-src="'/web/image/res.users/%s/avatar_128' % opportunity.user_id.id"
+                                            class="fpm-crm-salesperson-avatar" width="26"
+                                            height="26" alt="Salesperson" />
+                                        <span t-esc="opportunity.user_id.name" />
+                                    </div>
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="sales_team">
+                                    <t t-esc="opportunity.team_id.name" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="priority">
+                                    <span t-if="opportunity.priority" class="fpm-crm-priority"
+                                        t-att-title="'Priority: %s' % opportunity.priority">
+                                        <t t-foreach="range(int(opportunity.priority))" t-as="star">
+                                            <i class="fa fa-star" />
+                                        </t>
+                                    </span>
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="activities">
+                                    <t t-if="opportunity.activity_ids">
+                                        <t t-foreach="opportunity.activity_ids" t-as="activity">
+                                            <span class="fpm-crm-soft-badge">
+                                                <t t-esc="activity.activity_type_id.name" />
+                                            </span>
+                                        </t>
+                                    </t>
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="activity_by">
+                                    <t t-esc="opportunity.activity_user_id.name" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="my_deadline">
+                                    <span t-if="opportunity.activity_date_deadline"
+                                        t-field="opportunity.activity_date_deadline" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="campaign">
+                                    <t t-esc="opportunity.campaign_id.name" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="medium">
+                                    <t t-esc="opportunity.medium_id.name" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="source">
+                                    <t t-esc="opportunity.source_id.name" />
+                                </td>
+                                <td class="fpm-crm-optional-column fpm-crm-revenue"
+                                    data-column="expected_revenue">
+                                    <span t-esc="opportunity.expected_revenue"
+                                        t-options="{ 'widget':'monetary', 'display_currency':opportunity.company_currency }" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="expected_closing">
+                                    <span t-if="opportunity.date_deadline"
+                                        t-field="opportunity.date_deadline" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="stage">
+                                    <span class="fpm-crm-stage-badge">
+                                        <t t-esc="opportunity.stage_id.name" />
+                                    </span>
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="probability">
+                                    <span class="fpm-crm-probability">
+                                        <t t-esc="opportunity.probability" /> % </span>
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="lost_reason">
+                                    <t t-esc="opportunity.lost_reason_id.name" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="tags">
+                                    <t t-foreach="opportunity.tag_ids" t-as="tag">
+                                        <span class="fpm-crm-tag">
+                                            <t t-esc="tag.name" />
+                                        </span>
+                                    </t>
+                                </td>
+                                <td />
+                            </tr>
+                        </tbody>
+                        <!--  ==================================================
+                            FOOTER
+                        ===================================================  -->
+                        <tfoot>
+                            <tr>
+                                <td />
+                                <td />
+                                <td />
+                                <td class="fpm-crm-optional-column" data-column="created_on" />
+                                <td class="fpm-crm-optional-column" data-column="contact" />
+                                <td class="fpm-crm-optional-column" data-column="contact_name" />
+                                <td class="fpm-crm-optional-column" data-column="phone" />
+                                <td class="fpm-crm-optional-column" data-column="city" />
+                                <td class="fpm-crm-optional-column" data-column="state" />
+                                <td class="fpm-crm-optional-column" data-column="country" />
+                                <td class="fpm-crm-optional-column" data-column="salesperson" />
+                                <td class="fpm-crm-optional-column" data-column="sales_team" />
+                                <td class="fpm-crm-optional-column" data-column="priority" />
+                                <td class="fpm-crm-optional-column" data-column="activities" />
+                                <td class="fpm-crm-optional-column" data-column="activity_by" />
+                                <td class="fpm-crm-optional-column" data-column="my_deadline" />
+                                <td class="fpm-crm-optional-column" data-column="campaign" />
+                                <td class="fpm-crm-optional-column" data-column="medium" />
+                                <td class="fpm-crm-optional-column" data-column="source" />
+                                <td class="fpm-crm-optional-column fpm-crm-total-revenue"
+                                    data-column="expected_revenue">
+                                    <span t-esc="sum(opportunities.mapped('expected_revenue'))"
+                                        t-options="{ 'widget':'monetary', 'display_currency':opportunities[0].company_currency }" />
+                                </td>
+                                <td class="fpm-crm-optional-column" data-column="expected_closing" />
+                                <td class="fpm-crm-optional-column" data-column="stage" />
+                                <td class="fpm-crm-optional-column" data-column="probability" />
+                                <td class="fpm-crm-optional-column" data-column="lost_reason" />
+                                <td class="fpm-crm-optional-column" data-column="tags" />
+                                <td />
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="fpm-crm-pager-wrapper">
+                    <t t-call="portal.pager" />
+                </div>
+            </t>
+        </t>
+    </template>
+    <!--  ==========================================================
+        CRM OPPORTUNITY DETAIL
+    ==========================================================  -->
+    <template id="portal_my_crm_opportunity_detail" name="My CRM Opportunity Detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False" />
+            <div class="fpm-crm-detail-page">
+                <!--  BACK  -->
+                <div class="fpm-crm-back-navigation">
+                    <a href="/my/crm/opportunities">
+                        <i class="fa fa-arrow-left" />
+                        <span>Back to opportunities</span>
+                    </a>
+                </div>
+                <!--  ==================================================
+                    SUCCESS
+                ===================================================  -->
+                <div t-if="success"
+                    class="alert alert-success alert-dismissible fade show fpm-crm-alert"
+                    role="alert">
+                    <i class="fa fa-check-circle" />
+                    <span> Opportunity updated successfully. </span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                        aria-label="Close" />
+                </div>
+                <!--  ==================================================
+                    MAIL SUCCESS
+                ===================================================  -->
+                <div t-if="mail_sent"
+                    class="alert alert-success alert-dismissible fade show fpm-crm-alert"
+                    role="alert">
+                    <i class="fa fa-check-circle" />
+                    <span> Email sent successfully. </span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                        aria-label="Close" />
+                </div>
+                <!--  MAIL ERROR  -->
+                <div t-if="mail_error"
+                    class="alert alert-danger alert-dismissible fade show fpm-crm-alert"
+                    role="alert">
+                    <i class="fa fa-exclamation-circle" />
+                    <span>
+                        <t t-if="mail_error == 'invalid_email'"> Please enter a valid recipient
+                            email address. </t>
+                        <t t-elif="mail_error == 'missing_subject'"> Please enter an email subject. </t>
+                        <t t-elif="mail_error == 'missing_message'"> Please enter an email message. </t>
+                        <t t-elif="mail_error == 'no_crm_access'"> This user does not have CRM
+                            access </t>
+                        <t t-else=""> Unable to send the email. </t>
+                    </span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                        aria-label="Close" />
+                </div>
+                <!--  ==================================================
+                    COMMAND BAR
+                ===================================================  -->
+                <div class="fpm-crm-commandbar">
+                    <div class="fpm-crm-commandbar-top">
+                        <div class="fpm-crm-record-actions">
+                            <form t-attf-action="/my/crm/opportunities/#{opportunity.id}/won"
+                                method="post" class="m-0">
+                                <input type="hidden" name="csrf_token"
+                                    t-att-value="request.csrf_token()" />
+                                <button type="submit"
+                                    t-attf-class="fpm-crm-action-btn fpm-crm-action-won #{'active' if opportunity.won_status == 'won' else ''}">
+                                    <i class="fa fa-trophy" />
+                                    <span>Won</span>
+                                </button>
+                            </form>
+                            <button type="button"
+                                t-attf-class="fpm-crm-action-btn fpm-crm-action-lost #{'active' if opportunity.won_status == 'lost' else ''}"
+                                data-bs-toggle="modal" data-bs-target="#markLostModal">
+                                <i class="fa fa-times-circle" />
+                                <span>Lost</span>
+                            </button>
+                            <button type="button" class="fpm-crm-action-btn" data-bs-toggle="modal"
+                                data-bs-target="#sendMailModal">
+                                <i class="fa fa-envelope-o" />
+                                <span>Send Mail</span>
+                            </button>
+                        </div>
+                        <div class="fpm-crm-stage-pipeline">
+                            <t t-foreach="stages" t-as="stage">
+                                <a
+                                    t-attf-href="/my/crm/opportunities/#{opportunity.id}?stage_id=#{stage.id}"
+                                    t-attf-class="fpm-crm-stage-step #{'active' if stage.id == opportunity.stage_id.id else ''}">
+                                    <span>
+                                        <t t-esc="stage.name" />
+                                    </span>
+                                </a>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+                <!--  ==================================================
+                    WORKSPACE
+                ===================================================  -->
+                <div class="row g-4 fpm-crm-workspace">
+                    <!--  MAIN FORM  -->
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="fpm-crm-record-card">
+                            <form t-attf-action="/my/crm/opportunities/#{opportunity.id}"
+                                method="post">
+                                <input type="hidden" name="csrf_token"
+                                    t-att-value="request.csrf_token()" />
+                                <!--  TITLE  -->
+                                <div class="fpm-crm-record-title">
+                                    <div class="fpm-crm-section-caption"> Opportunity </div>
+                                    <input type="text" name="name" class="fpm-crm-title-input"
+                                        t-att-value="opportunity.name" />
+                                </div>
+                                <!--  PRIMARY INFO  -->
+                                <div class="fpm-crm-form-section">
+                                    <div class="fpm-crm-section-heading">
+                                        <div>
+                                            <h5> Opportunity Information </h5>
+                                            <p> Core commercial and customer information. </p>
+                                        </div>
+                                    </div>
+                                    <div class="row g-4">
+                                        <!--  LEFT  -->
+                                        <div class="col-md-6">
+                                            <div class="fpm-crm-field">
+                                                <label> Expected Revenue </label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"> $ </span>
+                                                    <input type="number" step="0.01"
+                                                        name="expected_revenue" class="form-control"
+                                                        t-att-value="opportunity.expected_revenue" />
+                                                </div>
+                                            </div>
+                                            <div class="fpm-crm-field">
+                                                <label> Contact </label>
+                                                <input type="text" class="form-control"
+                                                    t-att-value="opportunity.partner_id.name or opportunity.contact_name or ''"
+                                                    readonly="1" />
+                                            </div>
+                                            <div class="fpm-crm-field">
+                                                <label> Email </label>
+                                                <input type="email" name="email_from"
+                                                    class="form-control"
+                                                    t-att-value="opportunity.email_from" />
+                                            </div>
+                                            <div class="fpm-crm-field">
+                                                <label> Phone </label>
+                                                <input type="text" name="phone" class="form-control"
+                                                    t-att-value="opportunity.phone" />
+                                            </div>
+                                            <div class="fpm-crm-field">
+                                                <label> Lead Creator </label>
+                                                <input type="text" class="form-control"
+                                                    t-att-value="opportunity.lead_creator_id.name or ''"
+                                                    readonly="readonly" />
+                                            </div>
+                                        </div>
+                                        <!--  RIGHT  -->
+                                        <div class="col-md-6">
+                                            <div class="fpm-crm-field">
+                                                <label> Salesperson </label>
+                                                <select name="user_id" class="form-select">
+                                                    <option value=""> None </option>
+                                                    <t t-foreach="activity_users" t-as="salesperson">
+                                                        <option t-att-value="salesperson.id"
+                                                            t-att-selected="salesperson.id == opportunity.user_id.id">
+                                                            <t t-esc="salesperson.name" />
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            <div class="fpm-crm-field">
+                                                <label> Expected Closing </label>
+                                                <input type="date" name="date_deadline"
+                                                    class="form-control"
+                                                    t-att-value="opportunity.date_deadline" />
+                                            </div>
+                                            <div class="fpm-crm-field">
+                                                <label> Tags </label>
+                                                <select name="tag_ids"
+                                                    class="form-select fpm-crm-tag-select"
+                                                    multiple="multiple">
+                                                    <t t-foreach="all_tags" t-as="tag">
+                                                        <option t-att-value="tag.id"
+                                                            t-att-selected="tag.id in opportunity.tag_ids.ids">
+                                                            <t t-esc="tag.name" />
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            <div class="fpm-crm-field">
+                                                <label> Expected Budget </label>
+                                                <input type="number" name="expected_budget" class="form-control"
+                                                    min="0" step="1" t-att-value="opportunity.expected_budget" />
+                                            </div>
+                                            <div class="fpm-crm-field">
+                                                <label> Assign Team </label>
+                                                <input type="text" name="assign_team" class="form-control"
+                                                    t-att-value="opportunity.assign_team or ''" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--  ==================================================
+                                    TABS
+                                ===================================================  -->
+                                <div class="fpm-crm-tabs">
+                                    <ul class="nav" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" type="button"
+                                                data-bs-toggle="tab" data-bs-target="#tab_notes">
+                                                <i class="fa fa-file-text-o" /> Notes &amp; Description </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" type="button"
+                                                data-bs-toggle="tab" data-bs-target="#tab_contacts">
+                                                <i class="fa fa-address-card-o" /> Contacts &amp;
+                                                Marketing </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" type="button"
+                                                data-bs-toggle="tab" data-bs-target="#tab_products">
+                                                <i class="fa fa-cubes" /> Products </button>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <!--  NOTES  -->
+                                        <div class="tab-pane fade show active" id="tab_notes">
+                                            <div class="fpm-crm-field mb-0">
+                                                <label> Notes &amp; Description </label>
+                                                <textarea name="description"
+                                                    class="form-control fpm-crm-description"
+                                                    rows="7"
+                                                    placeholder="Internal notes or description...">
+                                                    <t t-esc="description_plain" />
+                                                </textarea>
+                                            </div>
+                                        </div>
+                                        <!--  CONTACTS  -->
+                                        <div class="tab-pane fade" id="tab_contacts">
+                                            <div class="row g-5">
+                                                <!--  COMPANY  -->
+                                                <div class="col-md-6">
+                                                    <div class="fpm-crm-subsection-title">
+                                                        <i class="fa fa-building-o" /> Company
+                                                        Information </div>
+                                                    <div class="fpm-crm-field">
+                                                        <label> Company Name </label>
+                                                        <input type="text" name="partner_name"
+                                                            class="form-control"
+                                                            t-att-value="opportunity.partner_name" />
+                                                    </div>
+                                                    <div class="fpm-crm-field">
+                                                        <label> Address Details </label>
+                                                        <input type="text" name="street"
+                                                            class="form-control mb-2"
+                                                            placeholder="Street"
+                                                            t-att-value="opportunity.street" />
+                                                        <input type="text" name="street2"
+                                                            class="form-control mb-2"
+                                                            placeholder="Street 2..."
+                                                            t-att-value="opportunity.street2" />
+                                                        <div class="row g-2 mb-2">
+                                                            <div class="col-6">
+                                                                <input type="text" name="city"
+                                                                    class="form-control"
+                                                                    placeholder="City"
+                                                                    t-att-value="opportunity.city" />
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <select name="state_id"
+                                                                    class="form-select">
+                                                                    <option value=""> State... </option>
+                                                                    <t t-foreach="crm_states"
+                                                                        t-as="state">
+                                                                        <option
+                                                                            t-att-value="state.id"
+                                                                            t-att-selected="state.id == opportunity.state_id.id">
+                                                                            <t t-esc="state.name" />
+                                                                        </option>
+                                                                    </t>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row g-2">
+                                                            <div class="col-6">
+                                                                <input type="text" name="zip"
+                                                                    class="form-control"
+                                                                    placeholder="ZIP"
+                                                                    t-att-value="opportunity.zip" />
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <select name="country_id"
+                                                                    class="form-select">
+                                                                    <option value=""> Country... </option>
+                                                                    <t t-foreach="crm_countries"
+                                                                        t-as="country">
+                                                                        <option
+                                                                            t-att-value="country.id"
+                                                                            t-att-selected="country.id == opportunity.country_id.id">
+                                                                            <t t-esc="country.name" />
+                                                                        </option>
+                                                                    </t>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--  MARKETING  -->
+                                                <div class="col-md-6">
+                                                    <div class="fpm-crm-subsection-title">
+                                                        <i class="fa fa-bullhorn" /> Contact &amp;
+                                                        Marketing </div>
+                                                    <div class="fpm-crm-field">
+                                                        <label> Job Position </label>
+                                                        <input type="text" name="function"
+                                                            class="form-control"
+                                                            t-att-value="opportunity.function" />
+                                                    </div>
+                                                    <div class="fpm-crm-field">
+                                                        <label> Website </label>
+                                                        <input type="text" name="website"
+                                                            class="form-control"
+                                                            placeholder="https://..."
+                                                            t-att-value="opportunity.website" />
+                                                    </div>
+                                                    <div class="fpm-crm-field">
+                                                        <label> Campaign </label>
+                                                        <select name="campaign_id"
+                                                            class="form-select">
+                                                            <option value=""> None </option>
+                                                            <t t-foreach="crm_campaigns"
+                                                                t-as="campaign">
+                                                                <option t-att-value="campaign.id"
+                                                                    t-att-selected="campaign.id == opportunity.campaign_id.id">
+                                                                    <t t-esc="campaign.name" />
+                                                                </option>
+                                                            </t>
+                                                        </select>
+                                                    </div>
+                                                    <div class="fpm-crm-field">
+                                                        <label> Medium </label>
+                                                        <select name="medium_id" class="form-select">
+                                                            <option value=""> None </option>
+                                                            <t t-foreach="crm_mediums" t-as="medium">
+                                                                <option t-att-value="medium.id"
+                                                                    t-att-selected="medium.id == opportunity.medium_id.id">
+                                                                    <t t-esc="medium.name" />
+                                                                </option>
+                                                            </t>
+                                                        </select>
+                                                    </div>
+                                                    <div class="fpm-crm-field">
+                                                        <label> Source </label>
+                                                        <select name="source_id" class="form-select">
+                                                            <option value=""> None </option>
+                                                            <t t-foreach="crm_sources" t-as="source">
+                                                                <option t-att-value="source.id"
+                                                                    t-att-selected="source.id == opportunity.source_id.id">
+                                                                    <t t-esc="source.name" />
+                                                                </option>
+                                                            </t>
+                                                        </select>
+                                                    </div>
+                                                    <div class="fpm-crm-field">
+                                                        <label> Referred By </label>
+                                                        <input type="text" name="referred"
+                                                            class="form-control"
+                                                            t-att-value="opportunity.referred" />
+                                                    </div>
+                                                    <div class="fpm-crm-field">
+                                                        <label> Sales Team </label>
+                                                        <select name="team_id" class="form-select">
+                                                            <option value=""> None </option>
+                                                            <t t-foreach="crm_teams" t-as="team">
+                                                                <option t-att-value="team.id"
+                                                                    t-att-selected="team.id == opportunity.team_id.id">
+                                                                    <t t-esc="team.name" />
+                                                                </option>
+                                                            </t>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- PRODUCTS -->
+                                        <div class="tab-pane fade" id="tab_products">
+                                            <div class="fpm-product-editor">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <div class="fpm-crm-subsection-title mb-0">
+                                                        <i class="fa fa-cubes" /> Opportunity Products
+                                                    </div>
+                                                    <button type="button" class="btn btn-sm btn-outline-primary fpm-add-product-row">
+                                                        <i class="fa fa-plus me-1" /> Add Product
+                                                    </button>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table class="table align-middle fpm-product-table">
+                                                        <thead><tr>
+                                                            <th>Product Name</th><th>Quantity</th><th>Unit Price</th><th>Taxes</th><th>Amount</th>
+                                                            <th>Category</th><th>Brand</th><th>Product Group</th><th>Part Number</th><th></th>
+                                                        </tr></thead>
+                                                        <tbody class="fpm-product-rows">
+                                                            <t t-foreach="opportunity.product_line_ids" t-as="line">
+                                                                <tr class="fpm-product-row">
+                                                                    <td><select name="product_id" class="form-select fpm-product-select" required="required">
+                                                                        <option value="">Select product...</option>
+                                                                        <t t-foreach="crm_products" t-as="product">
+                                                                            <option t-att-value="product.id" t-att-selected="product.id == line.product_id.id"
+                                                                                t-att-data-category="product.categ_id.name or ''"
+                                                                                t-att-data-price="product.lst_price or 0.0"
+                                                                                t-att-data-default-taxes="','.join(str(tax_id) for tax_id in product.taxes_id.ids)"
+                                                                                t-att-data-brand="product.product_tmpl_id.brand or ''"
+                                                                                t-att-data-group="product.product_tmpl_id.product_group or ''"
+                                                                                t-att-data-part-number="product.product_tmpl_id.part_number or ''">
+                                                                                <t t-esc="product.display_name"/>
+                                                                            </option>
+                                                                        </t>
+                                                                    </select></td>
+                                                                    <td><input type="number" name="product_quantity" class="form-control fpm-product-quantity" min="0" step="0.01" t-att-value="line.quantity"/></td>
+                                                                    <td><input type="number" name="product_price_unit" class="form-control fpm-product-price" min="0" step="0.01" t-att-value="line.price_unit"/></td>
+                                                                    <td>
+                                                                        <select class="form-select fpm-product-taxes" multiple="multiple">
+                                                                            <t t-foreach="crm_taxes" t-as="tax"><option t-att-value="tax.id" t-att-selected="tax.id in line.tax_ids.ids" t-att-data-amount="tax.amount" t-att-data-amount-type="tax.amount_type"><t t-esc="tax.name"/></option></t>
+                                                                        </select>
+                                                                        <input type="hidden" name="product_tax_ids" class="fpm-product-tax-ids" t-att-value="','.join(str(tax_id) for tax_id in line.tax_ids.ids)"/>
+                                                                    </td>
+                                                                    <td class="fpm-product-amount text-nowrap"><t t-esc="line.amount_total" t-options="{'widget': 'monetary', 'display_currency': opportunity.company_currency}"/></td>
+                                                                    <td class="fpm-product-category text-muted"><t t-esc="line.category_id.name or '-'"/></td>
+                                                                    <td><input type="text" name="product_brand" class="form-control fpm-product-brand" t-att-value="line.brand or ''" placeholder="Brand"/></td>
+                                                                    <td><input type="text" name="product_group" class="form-control fpm-product-group" t-att-value="line.product_group or ''" placeholder="Product Group"/></td>
+                                                                    <td><input type="number" name="product_part_number" class="form-control fpm-product-part-number" t-att-value="line.part_number or ''" placeholder="Part Number" step="1"/></td>
+                                                                    <td class="text-end"><button type="button" class="btn btn-sm btn-outline-danger fpm-remove-product-row"><i class="fa fa-trash"/></button></td>
+                                                                </tr>
+                                                            </t>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <template class="fpm-product-row-template">
+                                                    <tr class="fpm-product-row">
+                                                        <td><select name="product_id" class="form-select fpm-product-select" required="required">
+                                                            <option value="">Select product...</option>
+                                                            <t t-foreach="crm_products" t-as="product">
+                                                                <option t-att-value="product.id"
+                                                                    t-att-data-category="product.categ_id.name or ''"
+                                                                    t-att-data-price="product.lst_price or 0.0"
+                                                                    t-att-data-default-taxes="','.join(str(tax_id) for tax_id in product.taxes_id.ids)"
+                                                                    t-att-data-brand="product.product_tmpl_id.brand or ''"
+                                                                    t-att-data-group="product.product_tmpl_id.product_group or ''"
+                                                                    t-att-data-part-number="product.product_tmpl_id.part_number or ''"><t t-esc="product.display_name"/></option>
+                                                            </t>
+                                                        </select></td>
+                                                        <td><input type="number" name="product_quantity" class="form-control fpm-product-quantity" min="0" step="0.01" value="1.00"/></td>
+                                                        <td><input type="number" name="product_price_unit" class="form-control fpm-product-price" min="0" step="0.01" value="0.00"/></td>
+                                                        <td>
+                                                            <select class="form-select fpm-product-taxes" multiple="multiple">
+                                                                <t t-foreach="crm_taxes" t-as="tax"><option t-att-value="tax.id" t-att-data-amount="tax.amount" t-att-data-amount-type="tax.amount_type"><t t-esc="tax.name"/></option></t>
+                                                            </select>
+                                                            <input type="hidden" name="product_tax_ids" class="fpm-product-tax-ids" value=""/>
+                                                        </td>
+                                                        <td class="fpm-product-amount text-nowrap">0.00</td>
+                                                        <td class="fpm-product-category text-muted">-</td>
+                                                        <td><input type="text" name="product_brand" class="form-control fpm-product-brand" placeholder="Brand"/></td>
+                                                        <td><input type="text" name="product_group" class="form-control fpm-product-group" placeholder="Product Group"/></td>
+                                                        <td><input type="number" name="product_part_number" class="form-control fpm-product-part-number" placeholder="Part Number" step="1"/></td>
+                                                        <td class="text-end"><button type="button" class="btn btn-sm btn-outline-danger fpm-remove-product-row"><i class="fa fa-trash"/></button></td>
+                                                    </tr>
+                                                </template>
+                                                <div class="d-flex justify-content-end mt-3 fpm-product-total-wrap">
+                                                    <strong>Total: <span class="fpm-product-total"><t t-esc="opportunity.product_total" t-options="{'widget': 'monetary', 'display_currency': opportunity.company_currency}"/></span></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--  SAVE  -->
+                                <div class="fpm-crm-form-footer">
+                                    <button type="submit" class="btn btn-primary fpm-crm-save-btn">
+                                        <i class="fa fa-check me-1" /> Save Changes </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!--  ==================================================
+                        CHATTER
+                    ===================================================  -->
+                    <div class="col-xl-4 col-lg-5">
+                        <div id="fpmCrmChatter" class="fpm-crm-chatter">
+                            <!--  HEADER  -->
+                            <div class="fpm-crm-chatter-header">
+                                <div class="fpm-crm-chatter-title">
+                                    <div class="fpm-crm-chatter-title-icon">
+                                        <i class="fa fa-comments-o" />
+                                    </div>
+                                    <div>
+                                        <h5>Chatter</h5>
+                                        <span> Messages, notes and activities </span>
+                                    </div>
+                                </div>
+                                <div class="fpm-crm-chatter-actions">
+                                    <button type="button" class="btn btn-primary btn-sm"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#fpmSendMessageComposer"
+                                        aria-expanded="false" aria-controls="fpmSendMessageComposer">
+                                        <i class="fa fa-envelope-o" /> Message </button>
+                                    <button type="button" class="btn btn-light btn-sm"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#fpmLogNoteComposer" aria-expanded="false"
+                                        aria-controls="fpmLogNoteComposer">
+                                        <i class="fa fa-sticky-note-o" /> Note </button>
+                                    <button type="button" class="btn btn-light btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#scheduleActivityModal">
+                                        <i class="fa fa-clock-o" /> Activity </button>
+                                </div>
+                            </div>
+                            <!--  BODY  -->
+                            <div class="fpm-crm-chatter-body">
+                                <!--  COMPOSERS  -->
+                                <div id="fpmCrmChatterComposerAccordion">
+                                    <!--  MESSAGE  -->
+                                    <div id="fpmSendMessageComposer" class="collapse mb-3"
+                                        data-bs-parent="#fpmCrmChatterComposerAccordion">
+                                        <div
+                                            class="fpm-crm-chatter-composer fpm-crm-message-composer">
+                                            <div class="fpm-crm-composer-title">
+                                                <i class="fa fa-envelope-o" /> Send Message </div>
+                                            <form
+                                                t-attf-action="/my/crm/opportunities/#{opportunity.id}/post_message"
+                                                method="post">
+                                                <input type="hidden" name="csrf_token"
+                                                    t-att-value="request.csrf_token()" />
+                                                <input type="hidden" name="message_mode"
+                                                    value="message" />
+                                                <textarea name="message_body" class="form-control"
+                                                    rows="4" placeholder="Write a message..."
+                                                    required="required" />
+                                                <div class="fpm-crm-composer-actions">
+                                                    <button type="submit"
+                                                        class="btn btn-primary btn-sm">
+                                                        <i class="fa fa-paper-plane me-1" /> Send </button>
+                                                    <button type="button"
+                                                        class="btn btn-light btn-sm"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#fpmSendMessageComposer">
+                                                        Cancel </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!--  NOTE  -->
+                                    <div id="fpmLogNoteComposer" class="collapse mb-3"
+                                        data-bs-parent="#fpmCrmChatterComposerAccordion">
+                                        <div class="fpm-crm-chatter-composer fpm-crm-note-composer">
+                                            <div class="fpm-crm-composer-title">
+                                                <i class="fa fa-sticky-note-o" /> Log Note </div>
+                                            <form
+                                                t-attf-action="/my/crm/opportunities/#{opportunity.id}/post_message"
+                                                method="post">
+                                                <input type="hidden" name="csrf_token"
+                                                    t-att-value="request.csrf_token()" />
+                                                <input type="hidden" name="message_mode"
+                                                    value="note" />
+                                                <textarea name="message_body" class="form-control"
+                                                    rows="4" placeholder="Log an internal note..."
+                                                    required="required" />
+                                                <div class="fpm-crm-composer-actions">
+                                                    <button type="submit"
+                                                        class="btn btn-secondary btn-sm">
+                                                        <i class="fa fa-sticky-note-o me-1" /> Log
+                                                        Note </button>
+                                                    <button type="button"
+                                                        class="btn btn-light btn-sm"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#fpmLogNoteComposer"> Cancel </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--  ==================================================
+                                    TIMELINE
+                                ===================================================  -->
+                                <div id="fpmCrmChatterTimeline" class="fpm-crm-chatter-timeline">
+                                    <!--  ACTIVITIES  -->
+                                    <t t-foreach="activities" t-as="activity">
+                                        <div class="fpm-crm-timeline-item fpm-crm-timeline-activity">
+                                            <div class="fpm-crm-timeline-marker">
+                                                <div class="fpm-crm-timeline-icon">
+                                                    <i class="fa fa-clock-o" />
+                                                </div>
+                                            </div>
+                                            <div class="fpm-crm-timeline-content">
+                                                <div class="fpm-crm-timeline-top">
+                                                    <div>
+                                                        <strong> Activity Scheduled </strong>
+                                                        <div class="fpm-crm-timeline-type"
+                                                            t-if="activity.activity_type_id">
+                                                            <t
+                                                                t-esc="activity.activity_type_id.name" />
+                                                        </div>
+                                                    </div>
+                                                    <small t-if="activity.date_deadline">
+                                                        <i class="fa fa-calendar-o" />
+                                                        <span t-field="activity.date_deadline" />
+                                                    </small>
+                                                </div>
+                                                <div class="fpm-crm-activity-summary"
+                                                    t-if="activity.summary">
+                                                    <t t-esc="activity.summary" />
+                                                </div>
+                                                <div class="fpm-crm-activity-assignee"
+                                                    t-if="activity.user_id">
+                                                    <i class="fa fa-user-o" /> Assigned to <strong>
+                                                        <t t-esc="activity.user_id.name" />
+                                                    </strong>
+                                                </div>
+                                                <div class="fpm-crm-activity-note"
+                                                    t-if="activity.note">
+                                                    <t t-out="activity.note" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <!--  MESSAGES  -->
+                                    <t t-foreach="messages" t-as="message">
+                                        <t t-if="message.body or message.tracking_value_ids">
+                                            <div
+                                                class="fpm-crm-timeline-item fpm-crm-timeline-message">
+                                                <div class="fpm-crm-timeline-marker">
+                                                    <div class="fpm-crm-timeline-avatar">
+                                                        <t t-if="message.author_id">
+                                                            <img
+                                                                t-att-src="'/web/image/res.partner/%s/avatar_128' % message.author_id.id"
+                                                                width="36" height="36" alt="Avatar" />
+                                                        </t>
+                                                        <t t-else="">
+                                                            <div class="fpm-crm-default-avatar">
+                                                                <i class="fa fa-user" />
+                                                            </div>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                                <div class="fpm-crm-timeline-content">
+                                                    <div class="fpm-crm-timeline-top">
+                                                        <strong>
+                                                            <t t-if="message.author_id">
+                                                                <t t-esc="message.author_id.name" />
+                                                            </t>
+                                                            <t t-else=""> System </t>
+                                                        </strong>
+                                                        <small t-if="message.date">
+                                                            <span t-field="message.date"
+                                                                t-options="{'widget': 'datetime'}" />
+                                                        </small>
+                                                    </div>
+                                                    <div class="fpm-crm-message-body"
+                                                        t-if="message.body">
+                                                        <t t-out="message.body" />
+                                                    </div>
+                                                    <div class="fpm-crm-tracking-values"
+                                                        t-if="message.tracking_value_ids">
+                                                        <t t-foreach="message.tracking_value_ids"
+                                                            t-as="tracking">
+                                                            <div class="fpm-crm-tracking-value">
+                                                                <i class="fa fa-exchange" />
+                                                                <strong>
+                                                                    <t
+                                                                        t-esc="tracking.field_id.field_description or tracking.field_id.name" />
+                                                                </strong>
+                                                                <t
+                                                                    t-if="tracking.old_value_char or tracking.new_value_char">
+                                                                    <span class="fpm-crm-old-value">
+                                                                        <t
+                                                                            t-esc="tracking.old_value_char or '-'" />
+                                                                    </span>
+                                                                    <i
+                                                                        class="fa fa-long-arrow-right fpm-crm-change-arrow" />
+                                                                    <span class="fpm-crm-new-value">
+                                                                        <t
+                                                                            t-esc="tracking.new_value_char or '-'" />
+                                                                    </span>
+                                                                </t>
+                                                            </div>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </t>
+                                    <!--  EMPTY  -->
+                                    <div t-if="not messages and not activities"
+                                        class="fpm-crm-chatter-empty">
+                                        <div class="fpm-crm-chatter-empty-icon">
+                                            <i class="fa fa-comments-o" />
+                                        </div>
+                                        <strong>No activity yet</strong>
+                                        <span> Messages and activities will appear here. </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--  ==================================================
+                    SEND MAIL MODAL
+                ===================================================  -->
+                <div class="modal fade fpm-crm-modal" id="sendMailModal" tabindex="-1"
+                    aria-labelledby="sendMailModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <form t-attf-action="/my/crm/opportunities/#{opportunity.id}/send_mail"
+                                method="post">
+                                <input type="hidden" name="csrf_token"
+                                    t-att-value="request.csrf_token()" />
+                                <div class="modal-header">
+                                    <div class="fpm-crm-modal-heading">
+                                        <div class="fpm-crm-modal-icon">
+                                            <i class="fa fa-envelope-o" />
+                                        </div>
+                                        <div>
+                                            <h5 class="modal-title" id="sendMailModalLabel"> Send
+                                                Mail </h5>
+                                            <p> Send an email regarding this opportunity. </p>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close" />
+                                </div>
+                                <div class="modal-body">
+                                    <div class="fpm-crm-field">
+                                        <label>To</label>
+                                        <input type="email" name="email_to" class="form-control"
+                                            t-att-value="opportunity.email_from or ''"
+                                            placeholder="customer@example.com" required="required" />
+                                        <div class="fpm-crm-field-help"> Opportunity email is filled
+                                            automatically. </div>
+                                    </div>
+                                    <div class="fpm-crm-field">
+                                        <label>Subject</label>
+                                        <input type="text" name="subject" class="form-control"
+                                            t-att-value="default_mail_subject" required="required" />
+                                    </div>
+                                    <div class="fpm-crm-field mb-0">
+                                        <label>Message</label>
+                                        <textarea name="message_body"
+                                            class="form-control"
+                                            rows="18"
+                                            placeholder="Write your email..."
+                                            required="required"><t t-esc="default_mail_body"/></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light"
+                                        data-bs-dismiss="modal"> Cancel </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-paper-plane me-1" /> Send Mail </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--  ==================================================
+                    MARK LOST MODAL
+                ===================================================  -->
+                <div class="modal fade fpm-crm-modal" id="markLostModal" tabindex="-1"
+                    aria-labelledby="markLostModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div class="fpm-crm-modal-heading">
+                                    <div class="fpm-crm-modal-icon fpm-crm-modal-icon-danger">
+                                        <i class="fa fa-times" />
+                                    </div>
+                                    <div>
+                                        <h5 class="modal-title" id="markLostModalLabel"> Mark Lost </h5>
+                                        <p> Close this opportunity as lost. </p>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close" />
+                            </div>
+                            <form t-attf-action="/my/crm/opportunities/#{opportunity.id}/lost"
+                                method="post">
+                                <input type="hidden" name="csrf_token"
+                                    t-att-value="request.csrf_token()" />
+                                <div class="modal-body">
+                                    <div class="fpm-crm-field">
+                                        <label> Lost Reason </label>
+                                        <select name="lost_reason_id" class="form-select">
+                                            <option value=""> Select a reason... </option>
+                                            <t t-foreach="lost_reasons" t-as="reason">
+                                                <option t-att-value="reason.id"
+                                                    t-att-selected="opportunity.lost_reason_id and reason.id == opportunity.lost_reason_id.id">
+                                                    <t t-esc="reason.name" />
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="fpm-crm-field mb-0">
+                                        <label> Closing Note </label>
+                                        <textarea name="closing_note" class="form-control" rows="4"
+                                            placeholder="Add a closing note..." />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light"
+                                        data-bs-dismiss="modal"> Discard </button>
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fa fa-times-circle me-1" /> Mark as Lost </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!--  ==================================================
+                    SCHEDULE ACTIVITY MODAL
+                ===================================================  -->
+                <div class="modal fade fpm-crm-modal" id="scheduleActivityModal" tabindex="-1"
+                    aria-labelledby="scheduleActivityModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div class="fpm-crm-modal-heading">
+                                    <div class="fpm-crm-modal-icon">
+                                        <i class="fa fa-clock-o" />
+                                    </div>
+                                    <div>
+                                        <h5 class="modal-title" id="scheduleActivityModalLabel">
+                                            Schedule Activity </h5>
+                                        <p> Plan the next action for this opportunity. </p>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close" />
+                            </div>
+                            <form
+                                t-attf-action="/my/crm/opportunities/#{opportunity.id}/schedule_activity"
+                                method="post">
+                                <input type="hidden" name="csrf_token"
+                                    t-att-value="request.csrf_token()" />
+                                <div class="modal-body">
+                                    <!--  ACTIVITY TYPES  -->
+                                    <div class="fpm-crm-field">
+                                        <label> Activity Type </label>
+                                        <div class="fpm-crm-activity-types">
+                                            <t t-foreach="activity_types" t-as="activity_type">
+                                                <input type="radio" class="btn-check"
+                                                    name="activity_type_id"
+                                                    t-att-id="'portal_activity_type_%s' % activity_type.id"
+                                                    t-att-value="activity_type.id"
+                                                    required="required" />
+                                                <label class="fpm-crm-activity-type"
+                                                    t-att-for="'portal_activity_type_%s' % activity_type.id">
+                                                    <t
+                                                        t-if="'todo' in activity_type.name.lower() or 'to-do' in activity_type.name.lower()">
+                                                        <i class="fa fa-check" />
+                                                    </t>
+                                                    <t
+                                                        t-elif="'email' in activity_type.name.lower()">
+                                                        <i class="fa fa-envelope-o" />
+                                                    </t>
+                                                    <t t-elif="'call' in activity_type.name.lower()">
+                                                        <i class="fa fa-phone" />
+                                                    </t>
+                                                    <t
+                                                        t-elif="'meeting' in activity_type.name.lower()">
+                                                        <i class="fa fa-users" />
+                                                    </t>
+                                                    <t
+                                                        t-elif="'document' in activity_type.name.lower()">
+                                                        <i class="fa fa-upload" />
+                                                    </t>
+                                                    <t t-else="">
+                                                        <i class="fa fa-clock-o" />
+                                                    </t>
+                                                    <span>
+                                                        <t t-esc="activity_type.name" />
+                                                    </span>
+                                                </label>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="fpm-crm-field">
+                                                <label> Summary </label>
+                                                <input type="text" name="summary"
+                                                    class="form-control"
+                                                    placeholder="Activity summary e.g. Call client" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="fpm-crm-field">
+                                                <label> Due Date </label>
+                                                <input type="date" name="date_deadline"
+                                                    class="form-control" required="required" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="fpm-crm-field">
+                                        <label> Assigned to </label>
+                                        <select name="user_id" class="form-select">
+                                            <option value=""> Select User... </option>
+                                            <t t-foreach="activity_users" t-as="activity_user">
+                                                <option t-att-value="activity_user.id"
+                                                    t-att-selected="opportunity.user_id and activity_user.id == opportunity.user_id.id">
+                                                    <t t-esc="activity_user.name" />
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="fpm-crm-field mb-0">
+                                        <label> Note </label>
+                                        <textarea name="note" class="form-control" rows="5"
+                                            placeholder="Log a note..." />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light"
+                                        data-bs-dismiss="modal"> Discard </button>
+                                    <button type="submit" name="action" value="done"
+                                        class="btn btn-outline-secondary"> Mark Done </button>
+                                    <button type="submit" name="action" value="save"
+                                        class="btn btn-primary">
+                                        <i class="fa fa-check me-1" /> Save Activity </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
