@@ -1,3 +1,5 @@
+from email.utils import formataddr
+
 from markupsafe import Markup, escape
 
 from odoo import _, api, fields, models
@@ -224,11 +226,14 @@ class FakirCrmSendMailWizard(models.TransientModel):
         opportunity_url = self._build_opportunity_url()
         email_body = self._build_email_body(opportunity_url)
 
-        email_from = (
-            self.env.company.email
-            or self.env.user.email
-            or False
-        )
+        sender_user = self.env.user
+        sender_email = (sender_user.email or "").strip()
+        if not sender_email:
+            raise UserError(
+                _("Your Odoo user does not have an email address configured.")
+            )
+
+        email_from = formataddr((sender_user.name or "", sender_email))
 
         mail = self.env["mail.mail"].sudo().create({
             "subject": subject,

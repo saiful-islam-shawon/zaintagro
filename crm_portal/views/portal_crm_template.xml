@@ -373,6 +373,7 @@
                             email address. </t>
                         <t t-elif="mail_error == 'missing_subject'"> Please enter an email subject. </t>
                         <t t-elif="mail_error == 'missing_message'"> Please enter an email message. </t>
+                        <t t-elif="mail_error == 'missing_sender_email'"> Your Odoo user does not have an email address configured. </t>
                         <t t-elif="mail_error == 'no_crm_access'"> This user does not have CRM
                             access </t>
                         <t t-else=""> Unable to send the email. </t>
@@ -946,6 +947,96 @@
                                                     t-if="activity.note">
                                                     <t t-out="activity.note" />
                                                 </div>
+                                                <div class="fpm-crm-activity-actions mt-3 d-flex flex-wrap gap-2">
+                                                    <form t-attf-action="/my/crm/opportunities/#{opportunity.id}/activity/#{activity.id}/done" method="post">
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                                        <button type="submit" class="btn btn-success btn-sm">
+                                                            <i class="fa fa-check me-1" /> Mark Done
+                                                        </button>
+                                                    </form>
+                                                    <button type="button" class="btn btn-outline-primary btn-sm"
+                                                        data-bs-toggle="modal" t-att-data-bs-target="'#editActivityModal%s' % activity.id">
+                                                        <i class="fa fa-pencil me-1" /> Edit
+                                                    </button>
+                                                    <form t-attf-action="/my/crm/opportunities/#{opportunity.id}/activity/#{activity.id}/cancel" method="post"
+                                                        onsubmit="return confirm('Cancel this scheduled activity?');">
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                            <i class="fa fa-times me-1" /> Cancel
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="modal fade fpm-crm-modal" t-att-id="'editActivityModal%s' % activity.id" tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <div class="fpm-crm-modal-heading">
+                                                            <div class="fpm-crm-modal-icon"><i class="fa fa-pencil" /></div>
+                                                            <div>
+                                                                <h5 class="modal-title">Edit Activity</h5>
+                                                                <p>Update this scheduled activity.</p>
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                                                    </div>
+                                                    <form t-attf-action="/my/crm/opportunities/#{opportunity.id}/activity/#{activity.id}/edit" method="post">
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                                        <div class="modal-body">
+                                                            <div class="fpm-crm-field">
+                                                                <label>Activity Type</label>
+                                                                <div class="fpm-crm-activity-types">
+                                                                    <t t-foreach="activity_types" t-as="edit_activity_type">
+                                                                        <input type="radio" class="btn-check" name="activity_type_id"
+                                                                            t-att-id="'edit_activity_type_%s_%s' % (activity.id, edit_activity_type.id)"
+                                                                            t-att-value="edit_activity_type.id"
+                                                                            t-att-checked="edit_activity_type.id == activity.activity_type_id.id" required="required" />
+                                                                        <label class="fpm-crm-activity-type" t-att-for="'edit_activity_type_%s_%s' % (activity.id, edit_activity_type.id)">
+                                                                            <i class="fa fa-clock-o" />
+                                                                            <span><t t-esc="edit_activity_type.name" /></span>
+                                                                        </label>
+                                                                    </t>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row g-3">
+                                                                <div class="col-md-6">
+                                                                    <div class="fpm-crm-field">
+                                                                        <label>Summary</label>
+                                                                        <input type="text" name="summary" class="form-control" t-att-value="activity.summary or ''" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="fpm-crm-field">
+                                                                        <label>Due Date</label>
+                                                                        <input type="date" name="date_deadline" class="form-control" t-att-value="activity.date_deadline" required="required" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="fpm-crm-field">
+                                                                <label>Assigned to</label>
+                                                                <select name="user_id" class="form-select" required="required">
+                                                                    <t t-foreach="activity_users" t-as="activity_user">
+                                                                        <option t-att-value="activity_user.id" t-att-selected="activity.user_id and activity_user.id == activity.user_id.id">
+                                                                            <t t-esc="activity_user.name" />
+                                                                        </option>
+                                                                    </t>
+                                                                </select>
+                                                            </div>
+                                                            <div class="fpm-crm-field mb-0">
+                                                                <label>Note</label>
+                                                                <textarea name="note" class="form-control" rows="5"><t t-esc="activity_note_texts.get(activity.id, '')" /></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Discard</button>
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="fa fa-check me-1" /> Save Changes
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </t>
@@ -995,19 +1086,18 @@
                                                                     <t
                                                                         t-esc="tracking.field_id.field_description or tracking.field_id.name" />
                                                                 </strong>
-                                                                <t
-                                                                    t-if="tracking.old_value_char or tracking.new_value_char">
-                                                                    <span class="fpm-crm-old-value">
-                                                                        <t
-                                                                            t-esc="tracking.old_value_char or '-'" />
-                                                                    </span>
-                                                                    <i
-                                                                        class="fa fa-long-arrow-right fpm-crm-change-arrow" />
-                                                                    <span class="fpm-crm-new-value">
-                                                                        <t
-                                                                            t-esc="tracking.new_value_char or '-'" />
-                                                                    </span>
-                                                                </t>
+                                                                <t t-set="tracking_old_value"
+                                                                    t-value="opportunity.portal_tracking_display_value(tracking, 'old')" />
+                                                                <t t-set="tracking_new_value"
+                                                                    t-value="opportunity.portal_tracking_display_value(tracking, 'new')" />
+                                                                <span class="fpm-crm-old-value">
+                                                                    <t t-esc="tracking_old_value or '-'" />
+                                                                </span>
+                                                                <i
+                                                                    class="fa fa-long-arrow-right fpm-crm-change-arrow" />
+                                                                <span class="fpm-crm-new-value">
+                                                                    <t t-esc="tracking_new_value or '-'" />
+                                                                </span>
                                                             </div>
                                                         </t>
                                                     </div>

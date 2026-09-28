@@ -1,3 +1,5 @@
+from email.utils import formataddr
+
 from odoo.http import request, route
 
 from odoo.addons.portal.controllers.portal import (
@@ -30,6 +32,21 @@ class FakirCustomerPortal(CustomerPortal):
 
 
 
+    def _prepare_portal_layout_values(self):
+
+        values = super()._prepare_portal_layout_values()
+
+        user = request.env.user
+
+        has_crm_access = (
+            user.has_group("crm_portal.group_crm_website_access")
+            or user.has_group("base.group_system")
+        )
+
+        values["has_crm_portal_access"] = has_crm_access
+
+        return values
+
     def _prepare_home_portal_values(self, counters):
 
 
@@ -38,33 +55,20 @@ class FakirCustomerPortal(CustomerPortal):
 
 
 
-        user = request.env.user
-
-
-
-        has_crm_access = (
-
-            user.has_group(
-
-                "crm_portal.group_crm_website_access"
-
-            )
-
-            or user.has_group("base.group_system")
-
-        )
-
-
-
-        values["has_crm_portal_access"] = has_crm_access
-
-
-
-        # Odoo 19 portal counters are loaded asynchronously.  Only return a
+        # Odoo 19 portal counters are loaded asynchronously via /my/counters,
+        # which returns this whole dict as the JSON response and blindly sets
+        # textContent on the matching data-placeholder_count element for
+        # EVERY key in it - so this method must NEVER return a key that has
+        # no placeholder in the DOM (that is what "has_crm_portal_access"
+        # was doing before, and what crashed "My Account"). Only return a
         # counter when the standard portal counter interaction explicitly
-        # requests it; otherwise portal_home_counters.js receives a value for
-        # which no placeholder exists and tries to update a null DOM node.
+        # requests it.
         if "crm_opportunity_count" in counters:
+            user = request.env.user
+            has_crm_access = (
+                user.has_group("crm_portal.group_crm_website_access")
+                or user.has_group("base.group_system")
+            )
             values["crm_opportunity_count"] = (
                 request.env["crm.lead"]
                 .sudo()
@@ -2015,7 +2019,10 @@ class FakirCustomerPortal(CustomerPortal):
 
             "activity_users": activity_users,
 
-
+            "activity_note_texts": {
+                activity.id: html2plaintext(activity.note or "").strip()
+                for activity in opportunity.activity_ids
+            },
 
 
 
@@ -2420,11 +2427,14 @@ class FakirCustomerPortal(CustomerPortal):
         # EMAIL FROM
         # =====================================================
 
-        email_from = (
-            request.env.company.email
-            or request.env.user.email
-            or False
-        )
+        sender_user = request.env.user
+        sender_email = (sender_user.email or "").strip()
+        if not sender_email:
+            return request.redirect(
+                redirect_url + "?mail_error=missing_sender_email"
+            )
+
+        email_from = formataddr((sender_user.name or "", sender_email))
 
         # =====================================================
         # CREATE + SEND EMAIL
@@ -2561,6 +2571,91 @@ class FakirCustomerPortal(CustomerPortal):
 
 
 
+
+
+    # =========================================================
+
+    # ACTIVITY - EXISTING ACTIVITY ACTIONS
+
+    # =========================================================
+
+    def _get_portal_opportunity_activity(self, opportunity, activity_id):
+        try:
+            activity_id = int(activity_id)
+        except (TypeError, ValueError):
+            raise NotFound()
+
+        activity = request.env["mail.activity"].sudo().browse(activity_id)
+        if (
+            not activity.exists()
+            or activity.res_model != "crm.lead"
+            or activity.res_id != opportunity.id
+        ):
+            raise NotFound()
+        return activity
+
+    @route(
+        ["/my/crm/opportunities/<int:opportunity_id>/activity/<int:activity_id>/done"],
+        type="http", auth="user", website=True, methods=["POST"],
+    )
+    def portal_crm_activity_done(self, opportunity_id, activity_id, **kw):
+        self._check_crm_portal_access()
+        opportunity = self._get_crm_opportunity(opportunity_id)
+        activity = self._get_portal_opportunity_activity(opportunity, activity_id)
+        feedback = (kw.get("feedback") or "").strip() or False
+        activity.action_feedback(feedback=feedback)
+        return request.redirect("/my/crm/opportunities/%s" % opportunity.id)
+
+    @route(
+        ["/my/crm/opportunities/<int:opportunity_id>/activity/<int:activity_id>/cancel"],
+        type="http", auth="user", website=True, methods=["POST"],
+    )
+    def portal_crm_activity_cancel(self, opportunity_id, activity_id, **kw):
+        self._check_crm_portal_access()
+        opportunity = self._get_crm_opportunity(opportunity_id)
+        activity = self._get_portal_opportunity_activity(opportunity, activity_id)
+        activity.unlink()
+        return request.redirect("/my/crm/opportunities/%s" % opportunity.id)
+
+    @route(
+        ["/my/crm/opportunities/<int:opportunity_id>/activity/<int:activity_id>/edit"],
+        type="http", auth="user", website=True, methods=["POST"],
+    )
+    def portal_crm_activity_edit(self, opportunity_id, activity_id, **kw):
+        self._check_crm_portal_access()
+        opportunity = self._get_crm_opportunity(opportunity_id)
+        activity = self._get_portal_opportunity_activity(opportunity, activity_id)
+
+        try:
+            activity_type_id = int(kw.get("activity_type_id"))
+        except (TypeError, ValueError):
+            activity_type_id = False
+        activity_type = request.env["mail.activity.type"].sudo().browse(activity_type_id)
+        if not activity_type_id or not activity_type.exists():
+            return request.redirect("/my/crm/opportunities/%s" % opportunity.id)
+
+        date_deadline = kw.get("date_deadline")
+        if not date_deadline:
+            return request.redirect("/my/crm/opportunities/%s" % opportunity.id)
+
+        try:
+            user_id = int(kw.get("user_id"))
+        except (TypeError, ValueError):
+            user_id = False
+        assigned_user = request.env["res.users"].sudo().search([
+            ("id", "=", user_id), ("active", "=", True), ("share", "=", False)
+        ], limit=1) if user_id else False
+        if not assigned_user:
+            return request.redirect("/my/crm/opportunities/%s" % opportunity.id)
+
+        activity.write({
+            "activity_type_id": activity_type.id,
+            "summary": (kw.get("summary") or "").strip() or False,
+            "date_deadline": date_deadline,
+            "user_id": assigned_user.id,
+            "note": (kw.get("note") or "").strip() or False,
+        })
+        return request.redirect("/my/crm/opportunities/%s" % opportunity.id)
 
 
     # =========================================================
